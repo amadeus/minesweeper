@@ -1,0 +1,62 @@
+.container {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  border-width: 1px;
+}
+
+.unit {
+  display: block;
+  height: 23px;
+  width: 13px;
+  flex: 0 0 auto;
+  background: url('./assets/lcd-font.png');
+  background-position: 0 0;
+  image-rendering: pixelated;
+  overflow: hidden;
+  text-indent: -9999em;
+}
+
+.value0 {
+  background-position: 0 0;
+}
+
+.value1 {
+  background-position: -13px 0;
+}
+
+.value2 {
+  background-position: -26px 0;
+}
+
+.value3 {
+  background-position: -39px 0;
+}
+
+.value4 {
+  background-position: -52px 0;
+}
+
+.value5 {
+  background-position: -65px 0;
+}
+
+.value6 {
+  background-position: -78px 0;
+}
+
+.value7 {
+  background-position: -91px 0;
+}
+
+.value8 {
+  background-position: -104px 0;
+}
+
+.value9 {
+  background-position: -117px 0;
+}
+
+.negative {
+  background-position: -130px 0;
+}

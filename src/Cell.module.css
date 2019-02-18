@@ -1,0 +1,88 @@
+.container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: url('./assets/tile-bg.png');
+  image-rendering: pixelated;
+}
+
+.hidden {
+  background-position: 0 0;
+  cursor: pointer;
+}
+
+.hidden:active {
+  background-position: 0 -112px;
+}
+
+.flagged {
+  background-position: 0 -16px;
+}
+
+.flaggedMaybe {
+  background-position: 0 -32px;
+}
+
+.bombSelected {
+  background-position: 0 -48px;
+}
+
+.bombFound {
+  background-position: 0 -64px;
+}
+
+.bombRevealed {
+  background-position: 0 -80px;
+}
+
+.flaggedMaybeRevealed {
+  background-position: 0 -96px;
+}
+
+.revealed {
+  background-position: 0 -112px;
+}
+
+.touching {
+  position: absolute;
+  background: url('./assets/tile-numbers.png');
+  image-rendering: pixelated;
+  overflow: hidden;
+  text-indent: -9999em;
+  width: 100%;
+  height: 100%;
+}
+
+.value8 {
+  background-position: 0 0;
+}
+
+.value7 {
+  background-position: 0 -16px;
+}
+
+.value6 {
+  background-position: 0 -32px;
+}
+
+.value5 {
+  background-position: 0 -48px;
+}
+
+.value4 {
+  background-position: 0 -64px;
+}
+
+.value3 {
+  background-position: 0 -80px;
+}
+
+.value2 {
+  background-position: 0 -96px;
+}
+
+.value1 {
+  background-position: 0 -112px;
+}

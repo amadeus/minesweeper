@@ -3,15 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "classnames": "^2.2.6",
+    "flow-bin": "^0.93.0",
+    "keymirror": "^0.1.1",
+    "lodash": "^4.17.11",
+    "prettier": "^1.16.4",
     "react": "^16.8.2",
     "react-dom": "^16.8.2",
+    "react-helmet": "^5.2.0",
     "react-scripts": "2.1.5"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "now-build": "react-scripts build && mv build dist"
   },
   "eslintConfig": {
     "extends": "react-app"
