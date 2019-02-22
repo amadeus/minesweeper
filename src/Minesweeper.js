@@ -46,10 +46,10 @@ type GameProps = {|
 |};
 
 const Game = ({state, setState, handlers}: GameProps) => {
-  const {board, size, gameOver} = state;
+  const {board, rows, columns, gameOver} = state;
   const {handleClick, handleLock, handleMouseDown, handleMouseUp} = handlers;
   return (
-    <Board size={size} disable={gameOver}>
+    <Board rows={rows} columns={columns} disable={gameOver}>
       {lodash(board)
         .flatten()
         .map(cell => (

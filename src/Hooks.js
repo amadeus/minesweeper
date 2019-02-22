@@ -19,7 +19,8 @@ export type GameState = {|
   board: BoardType,
   gameOver: boolean,
   hasWon: boolean,
-  size: number,
+  rows: number,
+  columns: number,
   bombs: number,
   bombsToFlag: number,
   mouseDown: boolean,
@@ -46,7 +47,8 @@ const DEFAULT_STATE: GameState = {
   board: [],
   gameOver: false,
   hasWon: false,
-  size: 8,
+  rows: 8,
+  columns: 8,
   bombs: 10,
   bombsToFlag: 10,
   mouseDown: false,
@@ -113,8 +115,8 @@ export function useMinesweeperState(gameId: number, initialState?: GameState = D
 
   // Initialize board for every new gameId
   useEffect(() => {
-    const {size, bombs} = state;
-    let board = getEmptyGrid(size);
+    const {rows, columns, bombs} = state;
+    let board = getEmptyGrid(rows, columns);
     lodash(board)
       .flatten()
       .sampleSize(bombs)
