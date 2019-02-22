@@ -54,7 +54,7 @@ const Game = ({state, setState, actions}: GameProps) => {
     <Board rows={rows} columns={columns} disable={gameOver}>
       {lodash(board)
         .flatten()
-        .map(cell => <MemoizedCell key={`${cell.x}${cell.y}`} cell={cell} board={board} actions={actions} />)
+        .map(cell => <MemoizedCell key={`${cell.x}x${cell.y}`} cell={cell} board={board} actions={actions} />)
         .value()}
     </Board>
   );
