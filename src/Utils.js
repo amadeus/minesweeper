@@ -100,7 +100,7 @@ export function checkHasWon(board: BoardType): boolean {
 }
 
 // Reveal all bombs and highlight the one clicked
-export function setLosingBoard(losingCell: CellType, board: BoardType): BoardType {
+export function setLosingBoard(losingCell: ?CellType, board: BoardType): BoardType {
   return mapEachCell(board, cell => {
     if (cell.bomb) {
       if (cell === losingCell) {

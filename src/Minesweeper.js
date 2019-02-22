@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import lodash from 'lodash';
 import FaceButton from './FaceButton';
 import LCDDisplay from './LCDDisplay';
+import Timer from './Timer';
 import Board from './Board';
 import Cell from './Cell';
 import {useMinesweeperState} from './Hooks';
@@ -15,12 +16,13 @@ const MemoizedCell = memo(Cell);
 
 type GameStatusProps = {|
   state: GameState,
+  setState: StateUpdater,
   gameId: number,
   setGameId: any,
 |};
 
-const GameStatus = ({state, gameId, setGameId}: GameStatusProps) => {
-  const {gameOver, hasWon, mouseDown, bombsToFlag} = state;
+const GameStatus = ({state, gameId, setGameId, setState}: GameStatusProps) => {
+  const {gameOver, hasWon, mouseDown, bombsToFlag, started} = state;
   let type = FaceButton.Types.SMILE;
   if (gameOver) {
     if (hasWon) {
@@ -35,7 +37,7 @@ const GameStatus = ({state, gameId, setGameId}: GameStatusProps) => {
     <div className={classNames(styles.gameStatus, sharedStyles.inset)}>
       <LCDDisplay value={bombsToFlag} />
       <FaceButton type={type} onClick={() => setGameId(id => id + 1)} />
-      <LCDDisplay value={0} />
+      <Timer started={started} gameOver={gameOver} setState={setState} />
     </div>
   );
 };
@@ -75,7 +77,7 @@ const Minesweeper = () => {
   return (
     <div className={styles.container}>
       <div className={sharedStyles.outset}>
-        <GameStatus state={state} gameId={gameId} setGameId={setGameId} />
+        <GameStatus state={state} gameId={gameId} setState={setState} setGameId={setGameId} />
         <Game state={state} setState={setState} handlers={handlers} />
       </div>
     </div>

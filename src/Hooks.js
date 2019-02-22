@@ -1,4 +1,4 @@
-// @flow
+// @flow strict
 import {useState, useRef, useEffect} from 'react';
 import lodash from 'lodash';
 import {
@@ -14,7 +14,10 @@ import {CellStates, DEFAULT_STATE} from './Constants';
 import type {CellType, GameState, HandlerRefs, StateRefType, MouseEventType, StateUpdater} from './Types';
 
 const handleLock = (cell: CellType, {current: {state, setState}}: StateRefType) => {
-  const {board, bombs} = state;
+  const {board, bombs, started} = state;
+  if (!started) {
+    return;
+  }
   let _cell;
   if (cell.state === CellStates.HIDDEN) {
     _cell = {...cell, state: CellStates.FLAGGED};
@@ -25,7 +28,7 @@ const handleLock = (cell: CellType, {current: {state, setState}}: StateRefType) 
   }
   board[_cell.y][_cell.x] = _cell;
   const bombsFlagged = countFlags(board);
-  setState({...state, board, bombsToFlag: bombs - bombsFlagged});
+  setState(s => ({...s, board, bombsToFlag: bombs - bombsFlagged}));
 };
 
 const handleClick = (cell: CellType, {current: {state, setState}}: StateRefType) => {
@@ -44,7 +47,7 @@ const handleClick = (cell: CellType, {current: {state, setState}}: StateRefType)
       bombsToFlag = 0;
     }
   }
-  setState({...state, board, hasWon, gameOver, bombsToFlag});
+  setState(s => ({...s, board, hasWon, gameOver, bombsToFlag, started: true}));
 };
 
 function isRightClick(event: SyntheticMouseEvent<HTMLElement>): boolean {
@@ -52,11 +55,11 @@ function isRightClick(event: SyntheticMouseEvent<HTMLElement>): boolean {
 }
 
 const handleMouseDown = (event: MouseEventType, cell: CellType, {current: {state, setState}}: StateRefType) => {
-  isRightClick(event) && setState({...state, mouseDown: true});
+  isRightClick(event) && setState(s => ({...s, mouseDown: true}));
 };
 
 const handleMouseUp = (event: MouseEventType, cell: CellType, {current: {state, setState}}: StateRefType) => {
-  isRightClick(event) && setState({...state, mouseDown: false});
+  isRightClick(event) && setState(s => ({...s, mouseDown: false}));
 };
 
 type MinesweeperState = {|
