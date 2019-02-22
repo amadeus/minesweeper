@@ -6,7 +6,8 @@ import FaceButton from './FaceButton';
 import LCDDisplay from './LCDDisplay';
 import Board from './Board';
 import Cell from './Cell';
-import {useMinesweeperState, type GameState, type HandlerRefs, type StateUpdater} from './Hooks';
+import {useMinesweeperState} from './Hooks';
+import type {GameState, HandlerRefs, StateUpdater} from './Types';
 import sharedStyles from './Shared.module.css';
 import styles from './Minesweeper.module.css';
 

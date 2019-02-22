@@ -10,50 +10,8 @@ import {
   checkHasWon,
   setWinningBoard,
 } from './Utils';
-import {CellStates} from './Constants';
-import type {CellType, BoardType} from './Types';
-
-type MouseEventType = SyntheticMouseEvent<HTMLElement>;
-
-export type GameState = {|
-  board: BoardType,
-  gameOver: boolean,
-  hasWon: boolean,
-  rows: number,
-  columns: number,
-  bombs: number,
-  bombsToFlag: number,
-  mouseDown: boolean,
-  started: boolean,
-|};
-
-export type StateUpdater = ((GameState => GameState) | GameState) => void;
-
-type StateRefType = {
-  current: {|
-    state: GameState,
-    setState: StateUpdater,
-  |},
-};
-
-export type HandlerRefs = {|
-  handleLock: CellType => void,
-  handleClick: CellType => void,
-  handleMouseDown: (MouseEventType, CellType) => void,
-  handleMouseUp: (MouseEventType, CellType) => void,
-|};
-
-const DEFAULT_STATE: GameState = {
-  board: [],
-  gameOver: false,
-  hasWon: false,
-  rows: 8,
-  columns: 8,
-  bombs: 10,
-  bombsToFlag: 10,
-  mouseDown: false,
-  started: false,
-};
+import {CellStates, DEFAULT_STATE} from './Constants';
+import type {CellType, GameState, HandlerRefs, StateRefType, MouseEventType, StateUpdater} from './Types';
 
 const handleLock = (cell: CellType, {current: {state, setState}}: StateRefType) => {
   const {board, bombs} = state;

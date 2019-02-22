@@ -11,3 +11,33 @@ export type CellType = {|
 |};
 
 export type BoardType = Array<Array<CellType>>;
+
+export type GameState = {|
+  board: BoardType,
+  gameOver: boolean,
+  hasWon: boolean,
+  rows: number,
+  columns: number,
+  bombs: number,
+  bombsToFlag: number,
+  mouseDown: boolean,
+  started: boolean,
+|};
+
+export type MouseEventType = SyntheticMouseEvent<HTMLElement>;
+
+export type StateUpdater = ((GameState => GameState) | GameState) => void;
+
+export type StateRefType = {
+  current: {|
+    state: GameState,
+    setState: StateUpdater,
+  |},
+};
+
+export type HandlerRefs = {|
+  handleLock: CellType => void,
+  handleClick: CellType => void,
+  handleMouseDown: (MouseEventType, CellType) => void,
+  handleMouseUp: (MouseEventType, CellType) => void,
+|};

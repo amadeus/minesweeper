@@ -1,6 +1,7 @@
 // @flow strict
 
 import keyMirror from 'keymirror';
+import type {GameState} from './Types';
 
 export const CellStates = Object.freeze(
   keyMirror({
@@ -16,3 +17,15 @@ export const CellStates = Object.freeze(
 );
 
 export const CELL_SIZE = 16;
+
+export const DEFAULT_STATE: GameState = Object.freeze({
+  board: [],
+  gameOver: false,
+  hasWon: false,
+  rows: 8,
+  columns: 8,
+  bombs: 10,
+  bombsToFlag: 10,
+  mouseDown: false,
+  started: false,
+});
