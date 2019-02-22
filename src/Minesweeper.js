@@ -37,7 +37,7 @@ const GameStatus = ({state, gameId, setGameId, setState}: GameStatusProps) => {
     <div className={classNames(styles.gameStatus, sharedStyles.inset)}>
       <LCDDisplay value={bombsToFlag} />
       <FaceButton type={type} onClick={() => setGameId(id => id + 1)} />
-      <Timer started={started} gameOver={gameOver} setState={setState} />
+      <Timer key={gameId} started={started} gameOver={gameOver} setState={setState} />
     </div>
   );
 };
