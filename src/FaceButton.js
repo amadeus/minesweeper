@@ -1,5 +1,4 @@
 // @flow strict
-
 import React from 'react';
 import keyMirror from 'keymirror';
 import classNames from 'classnames';

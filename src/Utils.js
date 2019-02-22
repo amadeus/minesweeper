@@ -1,5 +1,4 @@
 // @flow strict
-
 import type {CellType, BoardType} from './Types';
 import lodash from 'lodash';
 import {CellStates} from './Constants';

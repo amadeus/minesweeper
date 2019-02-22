@@ -1,29 +1,25 @@
 // @flow strict
 import React, {useState, useEffect} from 'react';
 import LCDDisplay from './LCDDisplay';
-import {setLosingBoard} from './Utils';
-import type {StateUpdater} from './Types';
+import {ActionTypes} from './Constants';
+import type {Dispatch} from './Types';
 
 const MAX_SECONDS = 999;
 
 type TimerProps = {|
   started: boolean,
   gameOver: boolean,
-  setState: StateUpdater,
+  dispatch: Dispatch,
 |};
 
-const Timer = ({started, gameOver, setState}: TimerProps) => {
+const Timer = ({started, gameOver, dispatch}: TimerProps) => {
   const [time, setTime] = useState(0);
   useEffect(() => {
     let timeoutID;
     if (started && !gameOver) {
       timeoutID = setTimeout(() => {
         if (time >= MAX_SECONDS) {
-          setState(s => {
-            let {board} = s;
-            board = setLosingBoard(null, board);
-            return {...s, board, gameOver: true, hasWon: false};
-          });
+          dispatch({type: ActionTypes.SET_GAME_OVER});
         } else {
           setTime(t => Math.min(t + 1, MAX_SECONDS));
         }

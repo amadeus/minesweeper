@@ -1,6 +1,7 @@
 // @flow strict
-import {useState, useRef, useEffect} from 'react';
+import {useReducer} from 'react';
 import lodash from 'lodash';
+import uuid from 'uuid/v4';
 import {
   getEmptyGrid,
   precomputeSurroundingBombs,
@@ -10,76 +11,77 @@ import {
   checkHasWon,
   setWinningBoard,
 } from './Utils';
-import {CellStates, DEFAULT_STATE} from './Constants';
-import type {CellType, GameState, ActionRefs, StateRefType, StateUpdater} from './Types';
+import {CellStates, DEFAULT_STATE, ActionTypes} from './Constants';
+import type {GameState, Actions, Dispatch} from './Types';
 
-const handleLock = (cell: CellType, {current: {state, setState}}: StateRefType) => {
-  const {board, bombs, started} = state;
-  if (!started) {
-    return;
-  }
-  let _cell;
-  if (cell.state === CellStates.HIDDEN) {
-    _cell = {...cell, state: CellStates.FLAGGED};
-  } else if (cell.state === CellStates.FLAGGED) {
-    _cell = {...cell, state: CellStates.FLAGGED_MAYBE};
-  } else {
-    _cell = {...cell, state: CellStates.HIDDEN};
-  }
-  board[_cell.y][_cell.x] = _cell;
-  const bombsFlagged = countFlags(board);
-  setState(s => ({...s, board, bombsToFlag: bombs - bombsFlagged}));
-};
+function gameInitialize(state: GameState): GameState {
+  const {rows, columns, bombs} = state;
+  let board = getEmptyGrid(rows, columns);
+  lodash(board)
+    .flatten()
+    .sampleSize(bombs)
+    .forEach(cell => (cell.bomb = true));
+  board = precomputeSurroundingBombs(board);
+  return {...state, board, bombsToFlag: bombs, id: uuid()};
+}
 
-const handleClick = (cell: CellType, {current: {state, setState}}: StateRefType) => {
-  let {board, gameOver, bombsToFlag} = state;
-  let hasWon = false;
-  if (cell.bomb) {
-    board = setLosingBoard(cell, board);
-    gameOver = true;
-    bombsToFlag = 0;
-  } else {
-    board = revealClickedCell(cell, board);
-    hasWon = checkHasWon(board);
-    if (hasWon) {
-      gameOver = true;
-      board = setWinningBoard(board);
-      bombsToFlag = 0;
+function reducer(state: GameState, action: Actions): GameState {
+  switch (action.type) {
+    case ActionTypes.RESET_GAME:
+      return gameInitialize(action.state);
+    case ActionTypes.REVEAL_CELL: {
+      let {board, gameOver, bombsToFlag} = state;
+      const {cell} = action;
+      let hasWon = false;
+      if (cell.bomb) {
+        board = setLosingBoard(cell, board);
+        gameOver = true;
+        bombsToFlag = 0;
+      } else {
+        board = revealClickedCell(cell, board);
+        hasWon = checkHasWon(board);
+        if (hasWon) {
+          gameOver = true;
+          board = setWinningBoard(board);
+          bombsToFlag = 0;
+        }
+      }
+      return {...state, board, hasWon, gameOver, bombsToFlag, started: true};
     }
+    case ActionTypes.TOGGLE_FLAG_CELL: {
+      const {board, bombs, started} = state;
+      const {cell} = action;
+      if (!started) {
+        return state;
+      }
+      let _cell;
+      if (cell.state === CellStates.HIDDEN) {
+        _cell = {...cell, state: CellStates.FLAGGED};
+      } else if (cell.state === CellStates.FLAGGED) {
+        _cell = {...cell, state: CellStates.FLAGGED_MAYBE};
+      } else {
+        _cell = {...cell, state: CellStates.HIDDEN};
+      }
+      board[_cell.y][_cell.x] = _cell;
+      const bombsFlagged = countFlags(board);
+      return {...state, board, bombsToFlag: bombs - bombsFlagged};
+    }
+    case ActionTypes.SET_GAME_OVER: {
+      let {board} = state;
+      board = setLosingBoard(null, board);
+      return {...state, board, gameOver: true, hasWon: false};
+    }
+    default:
+      return state;
   }
-  setState(s => ({...s, board, hasWon, gameOver, bombsToFlag, started: true}));
-};
+}
 
 type MinesweeperState = {|
   state: GameState,
-  setState: StateUpdater,
-  actions: ActionRefs,
+  dispatch: Dispatch,
 |};
 
-export function useMinesweeperState(gameId: number, initialState?: GameState = DEFAULT_STATE): MinesweeperState {
-  // State
-  const [state, setState] = useState<GameState>(initialState);
-  const stateRef = useRef({state, setState});
-  stateRef.current = {state, setState};
-
-  // Initialize board for every new gameId
-  useEffect(() => {
-    const {rows, columns, bombs} = state;
-    let board = getEmptyGrid(rows, columns);
-    lodash(board)
-      .flatten()
-      .sampleSize(bombs)
-      .forEach(cell => (cell.bomb = true));
-    board = precomputeSurroundingBombs(board);
-    stateRef.current.state = {...DEFAULT_STATE, board, bombsToFlag: bombs};
-    setState(stateRef.current.state);
-  }, [gameId]);
-
-  // Setup actions
-  const actions = useRef<ActionRefs>({
-    toggleFlagged: (cell: CellType) => handleLock(cell, stateRef),
-    revealCell: (cell: CellType) => handleClick(cell, stateRef),
-  });
-
-  return {state, setState, actions: actions.current};
+export function useMinesweeperState(initialState?: GameState = DEFAULT_STATE): MinesweeperState {
+  const [state, dispatch] = useReducer<GameState, Actions, typeof DEFAULT_STATE>(reducer, initialState, gameInitialize);
+  return {state, dispatch};
 }

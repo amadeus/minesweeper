@@ -1,5 +1,5 @@
 // @flow strict
-import React, {useState, memo} from 'react';
+import React, {memo} from 'react';
 import classNames from 'classnames';
 import lodash from 'lodash';
 import FaceButton from './FaceButton';
@@ -8,7 +8,8 @@ import Timer from './Timer';
 import Board from './Board';
 import Cell from './Cell';
 import {useMinesweeperState} from './Hooks';
-import type {GameState, ActionRefs, StateUpdater} from './Types';
+import {ActionTypes, DEFAULT_STATE} from './Constants';
+import type {GameState, Dispatch} from './Types';
 import sharedStyles from './Shared.module.css';
 import styles from './Minesweeper.module.css';
 
@@ -16,13 +17,11 @@ const MemoizedCell = memo(Cell);
 
 type GameStatusProps = {|
   state: GameState,
-  setState: StateUpdater,
-  gameId: number,
-  setGameId: any,
+  dispatch: Dispatch,
 |};
 
-const GameStatus = ({state, gameId, setGameId, setState}: GameStatusProps) => {
-  const {gameOver, hasWon, mouseDown, bombsToFlag, started} = state;
+const GameStatus = ({state, dispatch}: GameStatusProps) => {
+  const {gameOver, hasWon, mouseDown, bombsToFlag, started, id} = state;
   let type = FaceButton.Types.SMILE;
   if (gameOver) {
     if (hasWon) {
@@ -36,38 +35,36 @@ const GameStatus = ({state, gameId, setGameId, setState}: GameStatusProps) => {
   return (
     <div className={classNames(styles.gameStatus, sharedStyles.inset)}>
       <LCDDisplay value={bombsToFlag} />
-      <FaceButton type={type} onClick={() => setGameId(id => id + 1)} />
-      <Timer key={gameId} started={started} gameOver={gameOver} setState={setState} />
+      <FaceButton type={type} onClick={() => dispatch({type: ActionTypes.RESET_GAME, state: DEFAULT_STATE})} />
+      <Timer key={id} started={started} gameOver={gameOver} dispatch={dispatch} />
     </div>
   );
 };
 
-type GameProps = {|
+type GameBoardProps = {|
   state: GameState,
-  setState: StateUpdater,
-  actions: ActionRefs,
+  dispatch: Dispatch,
 |};
 
-const Game = ({state, setState, actions}: GameProps) => {
+const GameBoard = ({state, dispatch}: GameBoardProps) => {
   const {board, rows, columns, gameOver} = state;
   return (
     <Board rows={rows} columns={columns} disable={gameOver}>
       {lodash(board)
         .flatten()
-        .map(cell => <MemoizedCell key={`${cell.x}x${cell.y}`} cell={cell} board={board} actions={actions} />)
+        .map(cell => <MemoizedCell key={`${cell.x}x${cell.y}`} cell={cell} board={board} dispatch={dispatch} />)
         .value()}
     </Board>
   );
 };
 
 const Minesweeper = () => {
-  const [gameId, setGameId] = useState(0);
-  const {state, actions, setState} = useMinesweeperState(gameId);
+  const {state, dispatch} = useMinesweeperState();
   return (
     <div className={styles.container}>
       <div className={sharedStyles.outset}>
-        <GameStatus state={state} gameId={gameId} setState={setState} setGameId={setGameId} />
-        <Game state={state} setState={setState} actions={actions} />
+        <GameStatus state={state} dispatch={dispatch} />
+        <GameBoard state={state} dispatch={dispatch} />
       </div>
     </div>
   );
