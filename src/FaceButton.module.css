@@ -3,6 +3,7 @@
   height: 26px;
   background: url('./assets/tile-faces.png');
   image-rendering: pixelated;
+  cursor: pointer;
 }
 
 .smile {
