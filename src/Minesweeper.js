@@ -8,7 +8,7 @@ import Timer from './Timer';
 import Board from './Board';
 import Cell from './Cell';
 import {useMinesweeperState} from './Hooks';
-import type {GameState, HandlerRefs, StateUpdater} from './Types';
+import type {GameState, ActionRefs, StateUpdater} from './Types';
 import sharedStyles from './Shared.module.css';
 import styles from './Minesweeper.module.css';
 
@@ -45,27 +45,16 @@ const GameStatus = ({state, gameId, setGameId, setState}: GameStatusProps) => {
 type GameProps = {|
   state: GameState,
   setState: StateUpdater,
-  handlers: HandlerRefs,
+  actions: ActionRefs,
 |};
 
-const Game = ({state, setState, handlers}: GameProps) => {
+const Game = ({state, setState, actions}: GameProps) => {
   const {board, rows, columns, gameOver} = state;
-  const {handleClick, handleLock, handleMouseDown, handleMouseUp} = handlers;
   return (
     <Board rows={rows} columns={columns} disable={gameOver}>
       {lodash(board)
         .flatten()
-        .map(cell => (
-          <MemoizedCell
-            key={`${cell.x}${cell.y}`}
-            cell={cell}
-            board={board}
-            onClick={handleClick}
-            onToggleLock={handleLock}
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
-          />
-        ))
+        .map(cell => <MemoizedCell key={`${cell.x}${cell.y}`} cell={cell} board={board} actions={actions} />)
         .value()}
     </Board>
   );
@@ -73,12 +62,12 @@ const Game = ({state, setState, handlers}: GameProps) => {
 
 const Minesweeper = () => {
   const [gameId, setGameId] = useState(0);
-  const {state, handlers, setState} = useMinesweeperState(gameId);
+  const {state, actions, setState} = useMinesweeperState(gameId);
   return (
     <div className={styles.container}>
       <div className={sharedStyles.outset}>
         <GameStatus state={state} gameId={gameId} setState={setState} setGameId={setGameId} />
-        <Game state={state} setState={setState} handlers={handlers} />
+        <Game state={state} setState={setState} actions={actions} />
       </div>
     </div>
   );

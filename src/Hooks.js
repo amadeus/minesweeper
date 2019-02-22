@@ -11,7 +11,7 @@ import {
   setWinningBoard,
 } from './Utils';
 import {CellStates, DEFAULT_STATE} from './Constants';
-import type {CellType, GameState, HandlerRefs, StateRefType, MouseEventType, StateUpdater} from './Types';
+import type {CellType, GameState, ActionRefs, StateRefType, StateUpdater} from './Types';
 
 const handleLock = (cell: CellType, {current: {state, setState}}: StateRefType) => {
   const {board, bombs, started} = state;
@@ -50,22 +50,10 @@ const handleClick = (cell: CellType, {current: {state, setState}}: StateRefType)
   setState(s => ({...s, board, hasWon, gameOver, bombsToFlag, started: true}));
 };
 
-function isRightClick(event: SyntheticMouseEvent<HTMLElement>): boolean {
-  return event.button !== 2;
-}
-
-const handleMouseDown = (event: MouseEventType, cell: CellType, {current: {state, setState}}: StateRefType) => {
-  isRightClick(event) && setState(s => ({...s, mouseDown: true}));
-};
-
-const handleMouseUp = (event: MouseEventType, cell: CellType, {current: {state, setState}}: StateRefType) => {
-  isRightClick(event) && setState(s => ({...s, mouseDown: false}));
-};
-
 type MinesweeperState = {|
   state: GameState,
   setState: StateUpdater,
-  handlers: HandlerRefs,
+  actions: ActionRefs,
 |};
 
 export function useMinesweeperState(gameId: number, initialState?: GameState = DEFAULT_STATE): MinesweeperState {
@@ -87,13 +75,11 @@ export function useMinesweeperState(gameId: number, initialState?: GameState = D
     setState(stateRef.current.state);
   }, [gameId]);
 
-  // Setup handlers
-  const handlers = useRef<HandlerRefs>({
-    handleLock: (cell: CellType) => handleLock(cell, stateRef),
-    handleClick: (cell: CellType) => handleClick(cell, stateRef),
-    handleMouseDown: (event: MouseEventType, cell: CellType) => handleMouseDown(event, cell, stateRef),
-    handleMouseUp: (event: MouseEventType, cell: CellType) => handleMouseUp(event, cell, stateRef),
+  // Setup actions
+  const actions = useRef<ActionRefs>({
+    toggleFlagged: (cell: CellType) => handleLock(cell, stateRef),
+    revealCell: (cell: CellType) => handleClick(cell, stateRef),
   });
 
-  return {state, setState, handlers: handlers.current};
+  return {state, setState, actions: actions.current};
 }

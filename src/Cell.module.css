@@ -13,7 +13,7 @@
   cursor: pointer;
 }
 
-.hidden:active {
+.hidden.active {
   background-position: 0 -112px;
 }
 

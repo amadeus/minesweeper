@@ -35,9 +35,7 @@ export type StateRefType = {
   |},
 };
 
-export type HandlerRefs = {|
-  handleLock: CellType => void,
-  handleClick: CellType => void,
-  handleMouseDown: (MouseEventType, CellType) => void,
-  handleMouseUp: (MouseEventType, CellType) => void,
+export type ActionRefs = {|
+  toggleFlagged: CellType => void,
+  revealCell: CellType => void,
 |};
