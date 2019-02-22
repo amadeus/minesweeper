@@ -86,26 +86,24 @@ type CellProps = {|
   onMouseUp: (MouseEventType, CellType) => void,
 |};
 
-const Cell = ({cell, board, onClick, onToggleLock, onMouseDown, onMouseUp}: CellProps) => {
-  return (
-    <div
-      className={classNames(styles.container, getStateClass(cell))}
-      onContextMenu={
-        isFlaggable(cell)
-          ? (event: MouseEventType) => {
-              event.preventDefault();
-              onToggleLock(cell);
-            }
-          : null
-      }
-      onClick={isInteractable(cell) ? () => onClick(cell) : null}
-      onMouseDown={isInteractable(cell) ? (event: MouseEventType) => onMouseDown(event, cell) : null}
-      onMouseUp={isInteractable(cell) ? (event: MouseEventType) => onMouseUp(event, cell) : null}>
-      {showTouchingNumber(cell) ? (
-        <span className={classNames(styles.touching, getTouchingClass(cell))}>{cell.touching}</span>
-      ) : null}
-    </div>
-  );
-};
+const Cell = ({cell, board, onClick, onToggleLock, onMouseDown, onMouseUp}: CellProps) => (
+  <div
+    className={classNames(styles.container, getStateClass(cell))}
+    onContextMenu={
+      isFlaggable(cell)
+        ? (event: MouseEventType) => {
+            event.preventDefault();
+            onToggleLock(cell);
+          }
+        : null
+    }
+    onClick={isInteractable(cell) ? () => onClick(cell) : null}
+    onMouseDown={isInteractable(cell) ? (event: MouseEventType) => onMouseDown(event, cell) : null}
+    onMouseUp={isInteractable(cell) ? (event: MouseEventType) => onMouseUp(event, cell) : null}>
+    {showTouchingNumber(cell) ? (
+      <span className={classNames(styles.touching, getTouchingClass(cell))}>{cell.touching}</span>
+    ) : null}
+  </div>
+);
 
 export default Cell;
