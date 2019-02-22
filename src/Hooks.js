@@ -71,7 +71,7 @@ export function useMinesweeperState(gameId: number, initialState?: GameState = D
       .sampleSize(bombs)
       .forEach(cell => (cell.bomb = true));
     board = precomputeSurroundingBombs(board);
-    stateRef.current.state = {...DEFAULT_STATE, board};
+    stateRef.current.state = {...DEFAULT_STATE, board, bombsToFlag: bombs};
     setState(stateRef.current.state);
   }, [gameId]);
 
