@@ -7,8 +7,10 @@ import LCDDisplay from './LCDDisplay';
 import Timer from './Timer';
 import Board from './Board';
 import Cell from './Cell';
+import Window from './Window';
+import Menus from './Menus';
 import {useMinesweeperState} from './Hooks';
-import {ActionTypes, DEFAULT_STATE} from './Constants';
+import {ActionTypes} from './Constants';
 import type {GameState, Dispatch} from './Types';
 import sharedStyles from './Shared.module.css';
 import styles from './Minesweeper.module.css';
@@ -35,7 +37,7 @@ const GameStatus = ({state, dispatch}: GameStatusProps) => {
   return (
     <div className={classNames(styles.gameStatus, sharedStyles.inset)}>
       <LCDDisplay value={bombsToFlag} />
-      <FaceButton type={type} onClick={() => dispatch({type: ActionTypes.RESET_GAME, state: DEFAULT_STATE})} />
+      <FaceButton type={type} onClick={() => dispatch({type: ActionTypes.RESET_GAME})} />
       <Timer key={id} started={started} gameOver={gameOver} dispatch={dispatch} />
     </div>
   );
@@ -61,10 +63,12 @@ const GameBoard = ({state, dispatch}: GameBoardProps) => {
 const Minesweeper = () => {
   const {state, dispatch} = useMinesweeperState();
   return (
-    <div className={sharedStyles.outset}>
-      <GameStatus state={state} dispatch={dispatch} />
-      <GameBoard state={state} dispatch={dispatch} />
-    </div>
+    <Window title="Minesweeper" renderMenuItems={() => <Menus dispatch={dispatch} />}>
+      <div className={sharedStyles.outset}>
+        <GameStatus state={state} dispatch={dispatch} />
+        <GameBoard state={state} dispatch={dispatch} />
+      </div>
+    </Window>
   );
 };
 

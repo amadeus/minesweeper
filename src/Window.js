@@ -38,11 +38,14 @@ export const MenuItem = ({active = false, id, children, onClick, renderMenuList}
 
 type MenuListItemProps = {|
   children: Node,
+  onClick: () => void,
   separator?: boolean,
 |};
 
-export const MenuListItem = ({children, separator = false}: MenuListItemProps) => (
-  <div className={classNames({[styles.menuListItem]: true, [styles.separator]: separator})}>{children}</div>
+export const MenuListItem = ({children, separator = false, onClick}: MenuListItemProps) => (
+  <div className={classNames({[styles.menuListItem]: true, [styles.separator]: separator})} onClick={onClick}>
+    {children}
+  </div>
 );
 
 type TitleBarProps = {|

@@ -28,7 +28,7 @@ export type MouseEventType = SyntheticMouseEvent<HTMLElement>;
 
 export type ActionResetGame = {|
   type: $PropertyType<ActionTypes, 'RESET_GAME'>,
-  state: GameState,
+  state?: GameState,
 |};
 
 export type ActionRevealCell = {|

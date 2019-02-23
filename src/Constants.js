@@ -24,10 +24,10 @@ export const DEFAULT_STATE: GameState = Object.freeze({
   board: [],
   gameOver: false,
   hasWon: false,
-  rows: 14,
-  columns: 20,
-  bombs: 43,
-  bombsToFlag: 10,
+  rows: 16,
+  columns: 16,
+  bombs: 40,
+  bombsToFlag: 0,
   mouseDown: false,
   started: false,
 });
@@ -41,7 +41,30 @@ export const ActionTypes = Object.freeze(
   })
 );
 
+export const MenuGroups = Object.freeze(
+  keyMirror({
+    GAME: null,
+    HELP: null,
+  })
+);
+
+export const GameItems = Object.freeze(
+  keyMirror({
+    NEW: null,
+    BEGINNER: null,
+    INTERMEDIATE: null,
+    EXPERT: null,
+    CUSTOM: null,
+  })
+);
+
+export const HelpItems = Object.freeze(
+  keyMirror({
+    NOPE: null,
+  })
+);
+
 export const MenuItems = Object.freeze({
-  Game: ['New', 'Beginner', 'Intermediate', 'Expert', 'Custom'],
-  Help: ['Nope'],
+  [MenuGroups.GAME]: [GameItems.NEW, GameItems.BEGINNER, GameItems.INTERMEDIATE, GameItems.EXPERT, GameItems.CUSTOM],
+  [MenuGroups.HELP]: [HelpItems.NOPE],
 });

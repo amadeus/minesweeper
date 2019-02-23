@@ -14,7 +14,7 @@ import {
 import {CellStates, DEFAULT_STATE, ActionTypes} from './Constants';
 import type {GameState, Actions, Dispatch} from './Types';
 
-function gameInitialize(state: GameState): GameState {
+function gameInitialize(state: GameState = DEFAULT_STATE): GameState {
   const {rows, columns, bombs} = state;
   let board = getEmptyGrid(rows, columns);
   lodash(board)
@@ -22,13 +22,13 @@ function gameInitialize(state: GameState): GameState {
     .sampleSize(bombs)
     .forEach(cell => (cell.bomb = true));
   board = precomputeSurroundingBombs(board);
-  return {...state, board, bombsToFlag: bombs, id: uuid()};
+  return {...state, board, bombsToFlag: bombs, id: uuid(), started: false, hasWon: false, gameOver: false};
 }
 
 function reducer(state: GameState, action: Actions): GameState {
   switch (action.type) {
     case ActionTypes.RESET_GAME:
-      return gameInitialize(action.state);
+      return gameInitialize(action.state || state);
     case ActionTypes.REVEAL_CELL: {
       let {board, gameOver, bombsToFlag} = state;
       const {cell} = action;
