@@ -40,3 +40,8 @@ export const ActionTypes = Object.freeze(
     TOGGLE_FLAG_CELL: null,
   })
 );
+
+export const MenuItems = Object.freeze({
+  Game: ['New', 'Beginner', 'Intermediate', 'Expert', 'Custom'],
+  Help: ['Nope'],
+});

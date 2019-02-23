@@ -61,11 +61,9 @@ const GameBoard = ({state, dispatch}: GameBoardProps) => {
 const Minesweeper = () => {
   const {state, dispatch} = useMinesweeperState();
   return (
-    <div className={styles.container}>
-      <div className={sharedStyles.outset}>
-        <GameStatus state={state} dispatch={dispatch} />
-        <GameBoard state={state} dispatch={dispatch} />
-      </div>
+    <div className={sharedStyles.outset}>
+      <GameStatus state={state} dispatch={dispatch} />
+      <GameBoard state={state} dispatch={dispatch} />
     </div>
   );
 };
