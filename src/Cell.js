@@ -1,9 +1,9 @@
 // @flow strict
-import React from 'react';
+import React, {useState} from 'react';
 import classNames from 'classnames';
-import {CellStates} from './Constants';
+import {CellStates, ActionTypes} from './Constants';
 import styles from './Cell.module.css';
-import type {CellType, BoardType} from './Types';
+import type {CellType, BoardType, MouseEventType, Dispatch} from './Types';
 
 function getStateClass(cell: CellType): ?string {
   switch (cell.state) {
@@ -39,9 +39,11 @@ function isFlaggable(cell: CellType): boolean {
   }
 }
 
-function isInteractable(cell: CellType): boolean {
+function isClickable(cell: CellType): boolean {
   switch (cell.state) {
     case CellStates.HIDDEN:
+    case CellStates.FLAGGED:
+    case CellStates.FLAGGED_MAYBE:
       return true;
     default:
       return false;
@@ -75,32 +77,69 @@ function getTouchingClass(cell: CellType): ?string {
   }
 }
 
-type MouseEventType = SyntheticMouseEvent<HTMLElement>;
+type MouseState = {|
+  primary: boolean,
+  secondary: boolean,
+|};
+
+type MouseStateSetter = ((MouseState => MouseState) | MouseState) => void;
+
+const DEFAULT_MOUSE_STATE: MouseState = {primary: false, secondary: false};
+
+function isMouseDown(mouseState: MouseState) {
+  return mouseState.primary || mouseState.secondary;
+}
+
+function preventDefault(event: SyntheticMouseEvent<HTMLElement>) {
+  event.preventDefault();
+}
+
+function handleMouseDown({button}: MouseEventType, setMouseState: MouseStateSetter) {
+  setMouseState(state => {
+    switch (button) {
+      case 0: // primary
+        return {...state, primary: true};
+      case 2: // secondary
+        return {...state, secondary: true};
+      default:
+        return state;
+    }
+  });
+}
+
+function handleMouseUp(event: MouseEventType, setMouseState: MouseStateSetter, cell: CellType, dispatch: Dispatch) {
+  event.preventDefault();
+  switch (event.button) {
+    case 0: // primary
+      cell.state === CellStates.HIDDEN && dispatch({type: ActionTypes.REVEAL_CELL, cell});
+      break;
+    case 2: // secondary
+      isFlaggable(cell) && dispatch({type: ActionTypes.TOGGLE_FLAG_CELL, cell});
+      break;
+    default:
+      break;
+  }
+  setMouseState(() => DEFAULT_MOUSE_STATE);
+}
 
 type CellProps = {|
   cell: CellType,
   board: BoardType,
-  onClick: CellType => void,
-  onToggleLock: CellType => void,
-  onMouseDown: (MouseEventType, CellType) => void,
-  onMouseUp: (MouseEventType, CellType) => void,
+  dispatch: Dispatch,
 |};
 
-const Cell = ({cell, board, onClick, onToggleLock, onMouseDown, onMouseUp}: CellProps) => {
+const Cell = ({cell, board, dispatch}: CellProps) => {
+  const [mouseState, setMouseState] = useState<MouseState>(DEFAULT_MOUSE_STATE);
   return (
     <div
-      className={classNames(styles.container, getStateClass(cell))}
-      onContextMenu={
-        isFlaggable(cell)
-          ? (event: MouseEventType) => {
-              event.preventDefault();
-              onToggleLock(cell);
-            }
-          : null
-      }
-      onClick={isInteractable(cell) ? () => onClick(cell) : null}
-      onMouseDown={isInteractable(cell) ? (event: MouseEventType) => onMouseDown(event, cell) : null}
-      onMouseUp={isInteractable(cell) ? (event: MouseEventType) => onMouseUp(event, cell) : null}>
+      className={classNames(styles.container, getStateClass(cell), {
+        [styles.active]: mouseState.primary && cell.state === CellStates.HIDDEN,
+      })}
+      onContextMenu={preventDefault}
+      onClick={preventDefault}
+      onMouseDown={isClickable(cell) ? event => handleMouseDown(event, setMouseState) : null}
+      onMouseLeave={isMouseDown(mouseState) ? () => setMouseState(() => DEFAULT_MOUSE_STATE) : null}
+      onMouseUp={isMouseDown(mouseState) ? event => handleMouseUp(event, setMouseState, cell, dispatch) : null}>
       {showTouchingNumber(cell) ? (
         <span className={classNames(styles.touching, getTouchingClass(cell))}>{cell.touching}</span>
       ) : null}

@@ -1,157 +1,75 @@
 // @flow strict
-
-import React, {Component} from 'react';
+import React, {memo} from 'react';
 import classNames from 'classnames';
 import lodash from 'lodash';
+import FaceButton from './FaceButton';
+import LCDDisplay from './LCDDisplay';
+import Timer from './Timer';
 import Board from './Board';
 import Cell from './Cell';
-import LCDDisplay from './LCDDisplay';
-import FaceButton from './FaceButton';
-import {
-  getEmptyGrid,
-  precomputeSurroundingBombs,
-  revealClickedCell,
-  checkHasWon,
-  setLosingBoard,
-  countFlags,
-  setWinningBoard,
-} from './Utils';
-import {CellStates} from './Constants';
+import Window from './Window';
+import Menus from './Menus';
+import {useMinesweeperState} from './Hooks';
+import {ActionTypes} from './Constants';
+import type {GameState, Dispatch} from './Types';
 import sharedStyles from './Shared.module.css';
 import styles from './Minesweeper.module.css';
-import type {BoardType, CellType} from './Types';
 
-function isPrimaryButton(event: SyntheticMouseEvent<HTMLElement>): boolean {
-  return event.button === 0;
-}
+const MemoizedCell = memo(Cell);
 
-type MinesweeperProps = {||};
-
-type MinesweeperState = {|
-  board: BoardType,
-  gameOver: boolean,
-  hasWon: boolean,
-  size: number,
-  bombs: number,
-  bombsToFlag: number,
-  mouseDown: boolean,
-  started: boolean,
+type GameStatusProps = {|
+  state: GameState,
+  dispatch: Dispatch,
 |};
 
-class Minesweeper extends Component<MinesweeperProps, MinesweeperState> {
-  state = {
-    board: [],
-    gameOver: false,
-    hasWon: false,
-    size: 8,
-    bombs: 10,
-    bombsToFlag: 10,
-    mouseDown: false,
-    started: false,
-  };
-
-  initializeGame = () => {
-    const {size, bombs} = this.state;
-    let board = getEmptyGrid(size);
-    lodash(board)
-      .flatten()
-      .sampleSize(bombs)
-      .forEach(cell => (cell.bomb = true));
-    board = precomputeSurroundingBombs(board);
-    this.setState({board, gameOver: false, hasWon: false, mouseDown: false, bombsToFlag: bombs});
-  };
-
-  componentDidMount() {
-    this.initializeGame();
-  }
-
-  handleClick = (cell: CellType) => {
-    let {board, gameOver, bombsToFlag} = this.state;
-    let hasWon = false;
-    if (cell.bomb) {
-      board = setLosingBoard(cell, board);
-      gameOver = true;
-      bombsToFlag = 0;
+const GameStatus = ({state, dispatch}: GameStatusProps) => {
+  const {gameOver, hasWon, mouseDown, bombsToFlag, started, id} = state;
+  let type = FaceButton.Types.SMILE;
+  if (gameOver) {
+    if (hasWon) {
+      type = FaceButton.Types.KOOL;
     } else {
-      board = revealClickedCell(cell, board);
-      hasWon = checkHasWon(board);
-      if (hasWon) {
-        gameOver = true;
-        board = setWinningBoard(board);
-        bombsToFlag = 0;
-      }
+      type = FaceButton.Types.DED;
     }
-    this.setState({board, hasWon, gameOver, bombsToFlag});
-  };
+  } else if (mouseDown) {
+    type = FaceButton.Types.OHH;
+  }
+  return (
+    <div className={classNames(styles.gameStatus, sharedStyles.inset)}>
+      <LCDDisplay value={bombsToFlag} />
+      <FaceButton type={type} onClick={() => dispatch({type: ActionTypes.RESET_GAME})} />
+      <Timer key={id} started={started} gameOver={gameOver} dispatch={dispatch} />
+    </div>
+  );
+};
 
-  handleLock = (cell: CellType) => {
-    const {board, bombs} = this.state;
-    let _cell;
-    if (cell.state === CellStates.HIDDEN) {
-      _cell = {...cell, state: CellStates.FLAGGED};
-    } else if (cell.state === CellStates.FLAGGED) {
-      _cell = {...cell, state: CellStates.FLAGGED_MAYBE};
-    } else {
-      _cell = {...cell, state: CellStates.HIDDEN};
-    }
-    board[_cell.y][_cell.x] = _cell;
-    const bombsFlagged = countFlags(board);
-    this.setState({board, bombsToFlag: bombs - bombsFlagged});
-  };
+type GameBoardProps = {|
+  state: GameState,
+  dispatch: Dispatch,
+|};
 
-  renderGameState() {
-    const {gameOver, hasWon, mouseDown, bombsToFlag} = this.state;
-    let type = FaceButton.Types.SMILE;
-    if (gameOver) {
-      if (hasWon) {
-        type = FaceButton.Types.KOOL;
-      } else {
-        type = FaceButton.Types.DED;
-      }
-    } else if (mouseDown) {
-      type = FaceButton.Types.OHH;
-    }
-    return (
-      <div className={classNames(styles.gameStatus, sharedStyles.inset)}>
-        <LCDDisplay value={bombsToFlag} />
-        <FaceButton type={type} onClick={this.initializeGame} />
-        <LCDDisplay value={0} />
+const GameBoard = ({state, dispatch}: GameBoardProps) => {
+  const {board, rows, columns, gameOver} = state;
+  return (
+    <Board rows={rows} columns={columns} disable={gameOver}>
+      {lodash(board)
+        .flatten()
+        .map(cell => <MemoizedCell key={`${cell.x}x${cell.y}`} cell={cell} board={board} dispatch={dispatch} />)
+        .value()}
+    </Board>
+  );
+};
+
+const Minesweeper = () => {
+  const {state, dispatch} = useMinesweeperState();
+  return (
+    <Window title="Minesweeper" renderMenuItems={() => <Menus dispatch={dispatch} />}>
+      <div className={sharedStyles.outset}>
+        <GameStatus state={state} dispatch={dispatch} />
+        <GameBoard state={state} dispatch={dispatch} />
       </div>
-    );
-  }
-
-  renderGame() {
-    const {board, size, gameOver} = this.state;
-    return (
-      <Board size={size} disable={gameOver}>
-        {lodash(board)
-          .flatten()
-          .map(cell => (
-            <Cell
-              key={`${cell.x}${cell.y}`}
-              cell={cell}
-              board={board}
-              onClick={this.handleClick}
-              onToggleLock={this.handleLock}
-              onMouseDown={event => void (isPrimaryButton(event) && this.setState({mouseDown: true}))}
-              onMouseUp={event => void (isPrimaryButton(event) && this.setState({mouseDown: false}))}
-            />
-          ))
-          .value()}
-      </Board>
-    );
-  }
-
-  render() {
-    return (
-      <div className={styles.container}>
-        <div className={sharedStyles.outset}>
-          {this.renderGameState()}
-          {this.renderGame()}
-        </div>
-      </div>
-    );
-  }
-}
+    </Window>
+  );
+};
 
 export default Minesweeper;

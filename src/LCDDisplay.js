@@ -1,5 +1,4 @@
 // @flow strict
-
 import React from 'react';
 import classNames from 'classnames';
 import sharedStyles from './Shared.module.css';

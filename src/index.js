@@ -1,5 +1,4 @@
 // @flow strict
-
 import React, {Fragment} from 'react';
 import ReactDOM from 'react-dom';
 import Helment from 'react-helmet';

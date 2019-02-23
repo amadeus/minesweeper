@@ -1,5 +1,4 @@
 // @flow strict
-
 import type {CellType, BoardType} from './Types';
 import lodash from 'lodash';
 import {CellStates} from './Constants';
@@ -41,9 +40,9 @@ function generateEmptyCell(x: number, y: number): CellType {
 }
 
 // Generates an empty board...
-export function getEmptyGrid(size: number): BoardType {
-  return new Array(size).fill([]).map((_: [], y: number) => {
-    return new Array(size).fill(null).map((_: null, x: number) => generateEmptyCell(x, y));
+export function getEmptyGrid(rows: number, columns: number): BoardType {
+  return new Array(rows).fill([]).map((_: [], y: number) => {
+    return new Array(columns).fill(null).map((_: null, x: number) => generateEmptyCell(x, y));
   });
 }
 
@@ -100,7 +99,7 @@ export function checkHasWon(board: BoardType): boolean {
 }
 
 // Reveal all bombs and highlight the one clicked
-export function setLosingBoard(losingCell: CellType, board: BoardType): BoardType {
+export function setLosingBoard(losingCell: ?CellType, board: BoardType): BoardType {
   return mapEachCell(board, cell => {
     if (cell.bomb) {
       if (cell === losingCell) {
