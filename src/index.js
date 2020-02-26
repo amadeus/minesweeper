@@ -6,15 +6,13 @@ import Minesweeper from './Minesweeper';
 import './index.css';
 
 const root = document.getElementById('root');
-if (root == null) {
-  throw new Error('Minesweeper - invalid root');
-}
-ReactDOM.render(
-  <Fragment>
-    <Helment>
-      <title>Minesweeper</title>
-    </Helment>
-    <Minesweeper />
-  </Fragment>,
-  root
-);
+root != null &&
+  ReactDOM.render(
+    <Fragment>
+      <Helment>
+        <title>Minesweeper</title>
+      </Helment>
+      <Minesweeper />
+    </Fragment>,
+    root
+  );
