@@ -12,13 +12,22 @@ import {
   setWinningBoard,
 } from './Utils';
 import {CellStates, DEFAULT_STATE, ActionTypes} from './Constants';
-import type {GameState, Actions, Dispatch} from './Types';
+import type {GameState, Actions, Dispatch, CellType} from './Types';
 
 function gameInitialize(state: GameState = DEFAULT_STATE): GameState {
   const {rows, columns, bombs} = state;
   let board = getEmptyGrid(rows, columns);
   lodash(board)
     .flatten()
+    .filter(
+      ({x, y}: CellType) =>
+        !(
+          (x === 0 && y === 0) ||
+          (x === 0 && y === rows - 1) ||
+          (x === columns - 1 && y === rows - 1) ||
+          (x === columns - 1 && y === 0)
+        )
+    )
     .sampleSize(bombs)
     .forEach(cell => (cell.bomb = true));
   board = precomputeSurroundingBombs(board);
