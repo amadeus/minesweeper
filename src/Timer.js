@@ -14,19 +14,23 @@ type TimerProps = {|
 
 const Timer = ({started, gameOver, dispatch}: TimerProps) => {
   const [time, setTime] = useState(0);
-  useEffect(() => {
-    let timeoutID;
-    if (started && !gameOver) {
-      timeoutID = setTimeout(() => {
-        if (time >= MAX_SECONDS) {
-          dispatch({type: ActionTypes.SET_GAME_OVER});
-        } else {
-          setTime(t => Math.min(t + 1, MAX_SECONDS));
-        }
-      }, 1000);
-    }
-    return () => clearTimeout(timeoutID);
-  }, [time, started, gameOver]);
+  useEffect(
+    () => {
+      let timeoutID;
+      if (started && !gameOver) {
+        timeoutID = setTimeout(() => {
+          if (time >= MAX_SECONDS) {
+            dispatch({type: ActionTypes.SET_GAME_OVER});
+          } else {
+            setTime(t => Math.min(t + 1, MAX_SECONDS));
+          }
+        }, 1000);
+      }
+      return () => clearTimeout(timeoutID);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [time, started, gameOver]
+  );
   return <LCDDisplay value={time} digits={3} />;
 };
 
