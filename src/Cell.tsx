@@ -127,7 +127,7 @@ interface CellProps {
   dispatch: Dispatch;
 }
 
-const Cell = ({cell, board, dispatch}: CellProps) => {
+export default function Cell({cell, board, dispatch}: CellProps) {
   const [mouseState, setMouseState] = React.useState<MouseState>(DEFAULT_MOUSE_STATE);
   return (
     <div
@@ -144,6 +144,4 @@ const Cell = ({cell, board, dispatch}: CellProps) => {
       ) : null}
     </div>
   );
-};
-
-export default Cell;
+}

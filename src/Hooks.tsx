@@ -92,7 +92,6 @@ interface MinesweeperState {
 }
 
 export function useMinesweeperState(initialState: GameState = DEFAULT_STATE): MinesweeperState {
-  // TODO: What is going on here?
   const [state, dispatch] = useReducer<ReducerType, GameState>(reducer, initialState, gameInitialize);
   return {state, dispatch};
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import styles from './FaceButton.module.css';
 
-enum FaceTypes {
+export enum FaceTypes {
   SMILE,
   OHH,
   DED,
@@ -28,10 +28,6 @@ interface FaceButtonProps {
   onClick: () => void;
 }
 
-const FaceButton = ({type, onClick}: FaceButtonProps) => (
-  <div className={classNames(styles.container, getClass(type))} onClick={onClick} />
-);
-
-FaceButton.Types = FaceTypes;
-
-export default FaceButton;
+export default function FaceButton({type, onClick}: FaceButtonProps) {
+  return <div className={classNames(styles.container, getClass(type))} onClick={onClick} />;
+}

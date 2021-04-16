@@ -37,24 +37,24 @@ interface LCDDisplayProps {
   digits?: number | undefined;
 }
 
-const LCDDisplay = ({value, digits = 3}: LCDDisplayProps) => (
-  <div className={classNames(styles.container, sharedStyles.inset)}>
-    {String(value)
-      .replace('-', '')
-      .padStart(digits, '0')
-      .split('')
-      .map((v, index) => {
-        let _v = v;
-        if (value < 0 && index === 0) {
-          _v = '-';
-        }
-        return (
-          <span key={index} className={classNames(styles.unit, getValueClass(_v))}>
-            {_v}
-          </span>
-        );
-      })}
-  </div>
-);
-
-export default LCDDisplay;
+export default function LCDDisplay({value, digits = 3}: LCDDisplayProps) {
+  return (
+    <div className={classNames(styles.container, sharedStyles.inset)}>
+      {String(value)
+        .replace('-', '')
+        .padStart(digits, '0')
+        .split('')
+        .map((v, index) => {
+          let _v = v;
+          if (value < 0 && index === 0) {
+            _v = '-';
+          }
+          return (
+            <span key={index} className={classNames(styles.unit, getValueClass(_v))}>
+              {_v}
+            </span>
+          );
+        })}
+    </div>
+  );
+}

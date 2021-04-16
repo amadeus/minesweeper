@@ -11,7 +11,7 @@ interface TimerProps {
   dispatch: Dispatch;
 }
 
-const Timer = ({started, gameOver, dispatch}: TimerProps) => {
+export default function Timer({started, gameOver, dispatch}: TimerProps) {
   const [time, setTime] = useState(0);
   useEffect(
     () => {
@@ -31,6 +31,4 @@ const Timer = ({started, gameOver, dispatch}: TimerProps) => {
     [time, started, gameOver]
   );
   return <LCDDisplay value={time} digits={3} />;
-};
-
-export default Timer;
+}

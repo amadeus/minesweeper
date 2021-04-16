@@ -11,17 +11,17 @@ interface BoardProps {
   children: ReactNode;
 }
 
-const Board = ({rows, columns, children, disable = false}: BoardProps) => (
-  <div className={classNames(sharedStyles.inset, {[styles.disable]: disable})}>
-    <div
-      className={styles.grid}
-      style={{
-        gridTemplateColumns: `repeat(${columns}, ${CELL_SIZE}px)`,
-        gridTemplateRows: `repeat(${rows}, ${CELL_SIZE}px)`,
-      }}>
-      {children}
+export default function Board({rows, columns, children, disable = false}: BoardProps) {
+  return (
+    <div className={classNames(sharedStyles.inset, {[styles.disable]: disable})}>
+      <div
+        className={styles.grid}
+        style={{
+          gridTemplateColumns: `repeat(${columns}, ${CELL_SIZE}px)`,
+          gridTemplateRows: `repeat(${rows}, ${CELL_SIZE}px)`,
+        }}>
+        {children}
+      </div>
     </div>
-  </div>
-);
-
-export default Board;
+  );
+}

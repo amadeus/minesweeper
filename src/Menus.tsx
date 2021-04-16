@@ -58,7 +58,7 @@ interface MenusProps {
   dispatch: Dispatch;
 }
 
-function Menus({dispatch}: MenusProps) {
+export default function Menus({dispatch}: MenusProps) {
   const [selectedMenu, setSelectedMenu] = React.useState<string | null>(null);
   React.useEffect(() => {
     const handleOuterClick = () => {
@@ -92,5 +92,3 @@ function Menus({dispatch}: MenusProps) {
     </>
   );
 }
-
-export default Menus;
