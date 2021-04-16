@@ -1,13 +1,21 @@
-// @flow strict
 import type {CellType, BoardType} from './Types';
 import lodash from 'lodash';
 import {CellStates} from './Constants';
 
 // This array is used to `forEach` around a cell to check its siblings
-const SURROUNDING_CELLS = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+const SURROUNDING_CELLS = [
+  [-1, -1],
+  [-1, 0],
+  [-1, 1],
+  [0, -1],
+  [0, 1],
+  [1, -1],
+  [1, 0],
+  [1, 1],
+];
 
-function mapEachCell(board: BoardType, callback: CellType => CellType): BoardType {
-  return board.map(row => row.map(callback));
+function mapEachCell(board: BoardType, callback: (cell: CellType) => CellType): BoardType {
+  return board.map((row) => row.map(callback));
 }
 
 function getSurroundingBombs({x, y, bomb, state}: CellType, board: BoardType): number {
@@ -48,7 +56,7 @@ export function getEmptyGrid(rows: number, columns: number): BoardType {
 
 // Calcualte `touching` prop on all cells
 export function precomputeSurroundingBombs(board: BoardType): BoardType {
-  return mapEachCell(board, cell => ({...cell, touching: getSurroundingBombs(cell, board)}));
+  return mapEachCell(board, (cell) => ({...cell, touching: getSurroundingBombs(cell, board)}));
 }
 
 // Reveal the clicked cell. If the cell is empty (meaning it is not touching a
@@ -83,7 +91,7 @@ export function revealClickedCell(cell: CellType, board: BoardType): BoardType {
     cells.forEach(checkCell);
   }
 
-  toReveal.forEach(cell => {
+  toReveal.forEach((cell) => {
     board[cell.y][cell.x] = {...cell, state: CellStates.REVEALED};
   });
 
@@ -99,8 +107,8 @@ export function checkHasWon(board: BoardType): boolean {
 }
 
 // Reveal all bombs and highlight the one clicked
-export function setLosingBoard(losingCell: ?CellType, board: BoardType): BoardType {
-  return mapEachCell(board, cell => {
+export function setLosingBoard(losingCell: CellType | null, board: BoardType): BoardType {
+  return mapEachCell(board, (cell) => {
     if (cell.bomb) {
       if (cell === losingCell) {
         return {...cell, state: CellStates.BOMB_SELECTED};
@@ -113,7 +121,7 @@ export function setLosingBoard(losingCell: ?CellType, board: BoardType): BoardTy
 
 // This function is used on an `assumed` winning board to reveal all bumbs
 export function setWinningBoard(board: BoardType): BoardType {
-  return mapEachCell(board, cell => {
+  return mapEachCell(board, (cell) => {
     if (cell.bomb) {
       return {...cell, state: CellStates.BOMB_FOUND};
     }

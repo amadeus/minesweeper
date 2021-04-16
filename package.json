@@ -3,18 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "classnames": "^2.2.6",
-    "keymirror": "^0.1.1",
-    "lodash": "^4.17.11",
-    "react": "^16.8.2",
-    "react-dom": "^16.8.2",
-    "react-helmet": "^5.2.0",
-    "react-scripts": "3.4.0",
-    "uuid": "^3.3.2"
+    "classnames": "2.2.6",
+    "lodash": "4.17.11",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-helmet": "6.1.0",
+    "react-scripts": "4.0.3",
+    "typescript": "4.2.4",
+    "uuid": "8.3.2"
   },
   "devDependencies": {
-    "flow-bin": "^0.93.0",
-    "prettier": "^1.19.1"
+    "@types/classnames": "^2.2.11",
+    "@types/lodash": "^4.14.168",
+    "@types/react": "17.0.2",
+    "@types/react-dom": "17.0.2",
+    "@types/react-helmet": "6.1.1",
+    "@types/uuid": "8.3.0",
+    "prettier": "2.2.1"
   },
   "scripts": {
     "start": "react-scripts start",

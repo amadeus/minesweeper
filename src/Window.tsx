@@ -1,46 +1,47 @@
-// @flow strict
-
-import React, {type Node} from 'react';
+import * as React from 'react';
 import classNames from 'classnames';
 import styles from './Window.module.css';
+import type {MenuGroups} from './Constants';
 import type {MouseEventType} from './Types';
 
 const LineIcon = () => <div className={styles.lineIcon} />;
 
 const MinimizeIcon = () => <div className={styles.minimizeIcon} />;
 
-type TitleBarButtonProps = {|
-  children?: Node,
-|};
+interface TitleBarButtonProps {
+  children: React.ReactNode;
+}
 
 const TitleBarButton = ({children}: TitleBarButtonProps) => <div className={styles.button}>{children}</div>;
 
-type MenuBarProps = {|
-  children: Node,
-|};
+interface MenuBarProps {
+  children: React.ReactNode;
+}
 
 const MenuBar = ({children}: MenuBarProps) => <div className={styles.menuBar}>{children}</div>;
 
-type MenuItemProps = {|
-  children: Node,
-  id: string,
-  onClick: (event: MouseEventType, id: string) => void,
-  active?: boolean,
-  renderMenuList: (id: string) => Node,
-|};
+interface MenuItemProps {
+  children: React.ReactNode;
+  id: MenuGroups;
+  onClick: (event: MouseEventType, id: string) => void;
+  active?: boolean;
+  renderMenuList: (id: MenuGroups) => React.ReactNode;
+}
 
 export const MenuItem = ({active = false, id, children, onClick, renderMenuList}: MenuItemProps) => (
-  <div onClick={event => onClick(event, id)} className={classNames({[styles.menuItem]: true, [styles.active]: active})}>
+  <div
+    onClick={(event) => onClick(event, id)}
+    className={classNames({[styles.menuItem]: true, [styles.active]: active})}>
     {children}
     {active ? <div className={styles.menuList}>{renderMenuList(id)}</div> : null}
   </div>
 );
 
-type MenuListItemProps = {|
-  children: Node,
-  onClick: () => void,
-  separator?: boolean,
-|};
+interface MenuListItemProps {
+  children: React.ReactNode;
+  onClick: () => void;
+  separator?: boolean;
+}
 
 export const MenuListItem = ({children, separator = false, onClick}: MenuListItemProps) => (
   <div className={classNames({[styles.menuListItem]: true, [styles.separator]: separator})} onClick={onClick}>
@@ -48,9 +49,9 @@ export const MenuListItem = ({children, separator = false, onClick}: MenuListIte
   </div>
 );
 
-type TitleBarProps = {|
-  children: Node,
-|};
+interface TitleBarProps {
+  children: React.ReactNode;
+}
 
 const TitleBar = ({children}: TitleBarProps) => (
   <div className={styles.titleBar}>
@@ -64,11 +65,11 @@ const TitleBar = ({children}: TitleBarProps) => (
   </div>
 );
 
-type WindowProps = {|
-  title: Node,
-  renderMenuItems?: () => Node,
-  children: Node,
-|};
+interface WindowProps {
+  title: React.ReactNode;
+  renderMenuItems?: () => React.ReactNode;
+  children: React.ReactNode;
+}
 
 const Window = ({children, title, renderMenuItems}: WindowProps) => {
   return (

@@ -1,19 +1,15 @@
-// @flow strict
 import React from 'react';
-import keyMirror from 'keymirror';
 import classNames from 'classnames';
 import styles from './FaceButton.module.css';
 
-const FaceTypes = Object.freeze(
-  keyMirror({
-    SMILE: null,
-    OHH: null,
-    DED: null,
-    KOOL: null,
-  })
-);
+enum FaceTypes {
+  SMILE,
+  OHH,
+  DED,
+  KOOL,
+}
 
-function getClass(type: $Values<typeof FaceTypes>): string {
+function getClass(type: FaceTypes): string {
   switch (type) {
     case FaceTypes.OHH:
       return styles.ohh;
@@ -27,10 +23,10 @@ function getClass(type: $Values<typeof FaceTypes>): string {
   }
 }
 
-type FaceButtonProps = {|
-  type: $Values<typeof FaceTypes>,
-  onClick: () => void,
-|};
+interface FaceButtonProps {
+  type: FaceTypes;
+  onClick: () => void;
+}
 
 const FaceButton = ({type, onClick}: FaceButtonProps) => (
   <div className={classNames(styles.container, getClass(type))} onClick={onClick} />

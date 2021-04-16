@@ -1,4 +1,3 @@
-// @flow strict
 import React, {memo} from 'react';
 import classNames from 'classnames';
 import lodash from 'lodash';
@@ -17,10 +16,10 @@ import styles from './Minesweeper.module.css';
 
 const MemoizedCell = memo(Cell);
 
-type GameStatusProps = {|
-  state: GameState,
-  dispatch: Dispatch,
-|};
+interface GameStatusProps {
+  state: GameState;
+  dispatch: Dispatch;
+}
 
 const GameStatus = ({state, dispatch}: GameStatusProps) => {
   const {gameOver, hasWon, mouseDown, bombsToFlag, started, id} = state;
@@ -43,10 +42,10 @@ const GameStatus = ({state, dispatch}: GameStatusProps) => {
   );
 };
 
-type GameBoardProps = {|
-  state: GameState,
-  dispatch: Dispatch,
-|};
+interface GameBoardProps {
+  state: GameState;
+  dispatch: Dispatch;
+}
 
 const GameBoard = ({state, dispatch}: GameBoardProps) => {
   const {board, rows, columns, gameOver} = state;
@@ -54,7 +53,7 @@ const GameBoard = ({state, dispatch}: GameBoardProps) => {
     <Board rows={rows} columns={columns} disable={gameOver}>
       {lodash(board)
         .flatten()
-        .map(cell => <MemoizedCell key={`${cell.x}x${cell.y}`} cell={cell} board={board} dispatch={dispatch} />)
+        .map((cell) => <MemoizedCell key={`${cell.x}x${cell.y}`} cell={cell} board={board} dispatch={dispatch} />)
         .value()}
     </Board>
   );

@@ -1,10 +1,9 @@
-// @flow strict
 import React from 'react';
 import classNames from 'classnames';
 import sharedStyles from './Shared.module.css';
 import styles from './LCDDisplay.module.css';
 
-function getValueClass(value: string): ?string {
+function getValueClass(value: string): string | undefined {
   switch (value) {
     case '0':
       return styles.value0;
@@ -29,14 +28,14 @@ function getValueClass(value: string): ?string {
     case '-':
       return styles.negative;
     default:
-      return null;
+      return undefined;
   }
 }
 
-type LCDDisplayProps = {|
-  value: number,
-  digits?: number,
-|};
+interface LCDDisplayProps {
+  value: number;
+  digits?: number | undefined;
+}
 
 const LCDDisplay = ({value, digits = 3}: LCDDisplayProps) => (
   <div className={classNames(styles.container, sharedStyles.inset)}>

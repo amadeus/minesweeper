@@ -1,11 +1,10 @@
-// @flow strict
-import React, {useState} from 'react';
+import * as React from 'react';
 import classNames from 'classnames';
 import {CellStates, ActionTypes} from './Constants';
 import styles from './Cell.module.css';
 import type {CellType, BoardType, MouseEventType, Dispatch} from './Types';
 
-function getStateClass(cell: CellType): ?string {
+function getStateClass(cell: CellType): string | undefined {
   switch (cell.state) {
     case CellStates.HIDDEN:
       return styles.hidden;
@@ -24,7 +23,7 @@ function getStateClass(cell: CellType): ?string {
     case CellStates.REVEALED:
       return styles.revealed;
     default:
-      return null;
+      return undefined;
   }
 }
 
@@ -54,7 +53,7 @@ function showTouchingNumber(cell: CellType): boolean {
   return cell.touching > 0 && cell.state === CellStates.REVEALED;
 }
 
-function getTouchingClass(cell: CellType): ?string {
+function getTouchingClass(cell: CellType): string | undefined {
   switch (cell.touching) {
     case 1:
       return styles.value1;
@@ -73,16 +72,16 @@ function getTouchingClass(cell: CellType): ?string {
     case 8:
       return styles.value8;
     default:
-      return null;
+      return undefined;
   }
 }
 
-type MouseState = {|
-  primary: boolean,
-  secondary: boolean,
-|};
+interface MouseState {
+  primary: boolean;
+  secondary: boolean;
+}
 
-type MouseStateSetter = ((MouseState => MouseState) | MouseState) => void;
+type MouseStateSetter = (arg: ((arg: MouseState) => MouseState) | MouseState) => void;
 
 const DEFAULT_MOUSE_STATE: MouseState = {primary: false, secondary: false};
 
@@ -90,12 +89,12 @@ function isMouseDown(mouseState: MouseState) {
   return mouseState.primary || mouseState.secondary;
 }
 
-function preventDefault(event: SyntheticMouseEvent<HTMLElement>) {
+function preventDefault(event: React.MouseEvent<HTMLElement>) {
   event.preventDefault();
 }
 
 function handleMouseDown({button}: MouseEventType, setMouseState: MouseStateSetter) {
-  setMouseState(state => {
+  setMouseState((state) => {
     switch (button) {
       case 0: // primary
         return {...state, primary: true};
@@ -122,14 +121,14 @@ function handleMouseUp(event: MouseEventType, setMouseState: MouseStateSetter, c
   setMouseState(() => DEFAULT_MOUSE_STATE);
 }
 
-type CellProps = {|
-  cell: CellType,
-  board: BoardType,
-  dispatch: Dispatch,
-|};
+interface CellProps {
+  cell: CellType;
+  board: BoardType;
+  dispatch: Dispatch;
+}
 
 const Cell = ({cell, board, dispatch}: CellProps) => {
-  const [mouseState, setMouseState] = useState<MouseState>(DEFAULT_MOUSE_STATE);
+  const [mouseState, setMouseState] = React.useState<MouseState>(DEFAULT_MOUSE_STATE);
   return (
     <div
       className={classNames(styles.container, getStateClass(cell), {
@@ -137,9 +136,9 @@ const Cell = ({cell, board, dispatch}: CellProps) => {
       })}
       onContextMenu={preventDefault}
       onClick={preventDefault}
-      onMouseDown={isClickable(cell) ? event => handleMouseDown(event, setMouseState) : null}
-      onMouseLeave={isMouseDown(mouseState) ? () => setMouseState(() => DEFAULT_MOUSE_STATE) : null}
-      onMouseUp={isMouseDown(mouseState) ? event => handleMouseUp(event, setMouseState, cell, dispatch) : null}>
+      onMouseDown={isClickable(cell) ? (event) => handleMouseDown(event, setMouseState) : undefined}
+      onMouseLeave={isMouseDown(mouseState) ? () => setMouseState(() => DEFAULT_MOUSE_STATE) : undefined}
+      onMouseUp={isMouseDown(mouseState) ? (event) => handleMouseUp(event, setMouseState, cell, dispatch) : undefined}>
       {showTouchingNumber(cell) ? (
         <span className={classNames(styles.touching, getTouchingClass(cell))}>{cell.touching}</span>
       ) : null}
