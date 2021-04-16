@@ -1,7 +1,6 @@
-// @flow strict
 import {useReducer} from 'react';
 import lodash from 'lodash';
-import uuid from 'uuid/v4';
+import {v4} from 'uuid';
 import {
   getEmptyGrid,
   precomputeSurroundingBombs,
@@ -29,9 +28,9 @@ function gameInitialize(state: GameState = DEFAULT_STATE): GameState {
         )
     )
     .sampleSize(bombs)
-    .forEach(cell => (cell.bomb = true));
+    .forEach((cell) => (cell.bomb = true));
   board = precomputeSurroundingBombs(board);
-  return {...state, board, bombsToFlag: bombs, id: uuid(), started: false, hasWon: false, gameOver: false};
+  return {...state, board, bombsToFlag: bombs, id: v4(), started: false, hasWon: false, gameOver: false};
 }
 
 function reducer(state: GameState, action: Actions): GameState {
@@ -85,12 +84,14 @@ function reducer(state: GameState, action: Actions): GameState {
   }
 }
 
-type MinesweeperState = {|
-  state: GameState,
-  dispatch: Dispatch,
-|};
+type ReducerType = (state: GameState, action: Actions) => GameState;
 
-export function useMinesweeperState(initialState?: GameState = DEFAULT_STATE): MinesweeperState {
-  const [state, dispatch] = useReducer<GameState, Actions, typeof DEFAULT_STATE>(reducer, initialState, gameInitialize);
+interface MinesweeperState {
+  state: GameState;
+  dispatch: Dispatch;
+}
+
+export function useMinesweeperState(initialState: GameState = DEFAULT_STATE): MinesweeperState {
+  const [state, dispatch] = useReducer<ReducerType, GameState>(reducer, initialState, gameInitialize);
   return {state, dispatch};
 }

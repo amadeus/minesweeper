@@ -1,8 +1,7 @@
-// @flow strict
 import React, {memo} from 'react';
 import classNames from 'classnames';
 import lodash from 'lodash';
-import FaceButton from './FaceButton';
+import FaceButton, {FaceTypes} from './FaceButton';
 import LCDDisplay from './LCDDisplay';
 import Timer from './Timer';
 import Board from './Board';
@@ -17,22 +16,22 @@ import styles from './Minesweeper.module.css';
 
 const MemoizedCell = memo(Cell);
 
-type GameStatusProps = {|
-  state: GameState,
-  dispatch: Dispatch,
-|};
+interface GameStatusProps {
+  state: GameState;
+  dispatch: Dispatch;
+}
 
-const GameStatus = ({state, dispatch}: GameStatusProps) => {
+function GameStatus({state, dispatch}: GameStatusProps) {
   const {gameOver, hasWon, mouseDown, bombsToFlag, started, id} = state;
-  let type = FaceButton.Types.SMILE;
+  let type = FaceTypes.SMILE;
   if (gameOver) {
     if (hasWon) {
-      type = FaceButton.Types.KOOL;
+      type = FaceTypes.KOOL;
     } else {
-      type = FaceButton.Types.DED;
+      type = FaceTypes.DED;
     }
   } else if (mouseDown) {
-    type = FaceButton.Types.OHH;
+    type = FaceTypes.OHH;
   }
   return (
     <div className={classNames(styles.gameStatus, sharedStyles.inset)}>
@@ -41,26 +40,26 @@ const GameStatus = ({state, dispatch}: GameStatusProps) => {
       <Timer key={id} started={started} gameOver={gameOver} dispatch={dispatch} />
     </div>
   );
-};
+}
 
-type GameBoardProps = {|
-  state: GameState,
-  dispatch: Dispatch,
-|};
+interface GameBoardProps {
+  state: GameState;
+  dispatch: Dispatch;
+}
 
-const GameBoard = ({state, dispatch}: GameBoardProps) => {
+function GameBoard({state, dispatch}: GameBoardProps) {
   const {board, rows, columns, gameOver} = state;
   return (
     <Board rows={rows} columns={columns} disable={gameOver}>
       {lodash(board)
         .flatten()
-        .map(cell => <MemoizedCell key={`${cell.x}x${cell.y}`} cell={cell} board={board} dispatch={dispatch} />)
+        .map((cell) => <MemoizedCell key={`${cell.x}x${cell.y}`} cell={cell} board={board} dispatch={dispatch} />)
         .value()}
     </Board>
   );
-};
+}
 
-const Minesweeper = () => {
+export default function Minesweeper() {
   const {state, dispatch} = useMinesweeperState();
   return (
     <Window title="Minesweeper" renderMenuItems={() => <Menus dispatch={dispatch} />}>
@@ -70,6 +69,4 @@ const Minesweeper = () => {
       </div>
     </Window>
   );
-};
-
-export default Minesweeper;
+}
