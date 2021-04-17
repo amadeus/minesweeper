@@ -20,6 +20,12 @@ npm start
 
 to run the local dev server and be able to tube.
 
+If you'd like to run a quick TypeScript check:
+
+```
+npm run tsc
+```
+
 ## Todo
 
 * Custom Game configuration
