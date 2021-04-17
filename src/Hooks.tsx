@@ -9,6 +9,7 @@ import {
   revealClickedCell,
   checkHasWon,
   setWinningBoard,
+  getCellFromCords,
 } from './Utils';
 import {CellStates, DEFAULT_STATE, ActionTypes} from './Constants';
 import type {GameState, Actions, Dispatch, CellType} from './Types';
@@ -20,6 +21,9 @@ function gameInitialize(state: GameState = DEFAULT_STATE): GameState {
     .flatten()
     .filter(
       ({x, y}: CellType) =>
+        // NOTE: Since the beginning of the game is always a crapshoot and
+        // corners tend to be a good spot to start from, lets ensure there is
+        // never a bomb in a corner
         !(
           (x === 0 && y === 0) ||
           (x === 0 && y === rows - 1) ||
@@ -39,7 +43,8 @@ function reducer(state: GameState, action: Actions): GameState {
       return gameInitialize(action.state || state);
     case ActionTypes.REVEAL_CELL: {
       let {board, gameOver, bombsToFlag} = state;
-      const {cell} = action;
+      const cell = getCellFromCords(action.x, action.y, board);
+      if (cell == null) return state;
       let hasWon = false;
       if (cell.bomb) {
         board = setLosingBoard(cell, board);
@@ -58,7 +63,8 @@ function reducer(state: GameState, action: Actions): GameState {
     }
     case ActionTypes.TOGGLE_FLAG_CELL: {
       const {board, bombs, started} = state;
-      const {cell} = action;
+      const cell = getCellFromCords(action.x, action.y, board);
+      if (cell == null) return state;
       if (!started) {
         return state;
       }

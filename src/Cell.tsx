@@ -110,10 +110,10 @@ function handleMouseUp(event: MouseEventType, setMouseState: MouseStateSetter, c
   event.preventDefault();
   switch (event.button) {
     case 0: // primary
-      cell.state === CellStates.HIDDEN && dispatch({type: ActionTypes.REVEAL_CELL, cell});
+      cell.state === CellStates.HIDDEN && dispatch({type: ActionTypes.REVEAL_CELL, x: cell.x, y: cell.y});
       break;
     case 2: // secondary
-      isFlaggable(cell) && dispatch({type: ActionTypes.TOGGLE_FLAG_CELL, cell});
+      isFlaggable(cell) && dispatch({type: ActionTypes.TOGGLE_FLAG_CELL, x: cell.x, y: cell.y});
       break;
     default:
       break;

@@ -33,12 +33,14 @@ export interface ActionResetGame {
 
 export interface ActionRevealCell {
   type: ActionTypes.REVEAL_CELL;
-  cell: CellType;
+  x: number;
+  y: number;
 }
 
 export interface ActionToggleFlagCell {
   type: ActionTypes.TOGGLE_FLAG_CELL;
-  cell: CellType;
+  x: number;
+  y: number;
 }
 
 export interface ActionSetGameOver {

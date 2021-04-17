@@ -136,3 +136,7 @@ export function countFlags(board: BoardType): number {
     .filter((cell: CellType) => cell.state === CellStates.FLAGGED)
     .value().length;
 }
+
+export function getCellFromCords(x: number, y: number, board: BoardType): CellType | undefined {
+  return board[y][x];
+}
