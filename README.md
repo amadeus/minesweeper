@@ -15,7 +15,7 @@ npm install
 to get all your dependencies in place, followed by a yung:
 
 ```
-npm start
+npm run start
 ```
 
 to run the local dev server and be able to tube.
