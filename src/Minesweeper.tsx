@@ -53,7 +53,7 @@ function GameBoard({state, dispatch}: GameBoardProps) {
     <Board rows={rows} columns={columns} disable={gameOver}>
       {lodash(board)
         .flatten()
-        .map((cell) => <MemoizedCell key={`${cell.x}x${cell.y}`} cell={cell} board={board} dispatch={dispatch} />)
+        .map((cell) => <MemoizedCell key={`${cell.row}x${cell.col}`} cell={cell} board={board} dispatch={dispatch} />)
         .value()}
     </Board>
   );

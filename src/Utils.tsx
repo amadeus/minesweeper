@@ -18,17 +18,17 @@ function mapEachCell(board: BoardType, callback: (cell: CellType) => CellType): 
   return board.map((row) => row.map(callback));
 }
 
-function getSurroundingBombs({x, y, bomb, state}: CellType, board: BoardType): number {
+function getSurroundingBombs({row, col, bomb, state}: CellType, board: BoardType): number {
   if (bomb) {
     return 0;
   }
 
-  return SURROUNDING_CELLS.reduce<number>((acc, [_y, _x]) => {
-    const row = board[y + _y];
-    if (row == null) {
+  return SURROUNDING_CELLS.reduce<number>((acc, [rowOffset, colOffset]) => {
+    const _row = board[row + rowOffset];
+    if (_row == null) {
       return acc;
     }
-    const cell = row[x + _x];
+    const cell = _row[col + colOffset];
     if (cell == null) {
       return acc;
     }
@@ -37,10 +37,10 @@ function getSurroundingBombs({x, y, bomb, state}: CellType, board: BoardType): n
 }
 
 // Generates an empty cell...
-function generateEmptyCell(x: number, y: number): CellType {
+function generateEmptyCell(row: number, col: number): CellType {
   return {
-    x,
-    y,
+    row,
+    col,
     state: CellStates.HIDDEN,
     bomb: false,
     touching: 0,
@@ -49,8 +49,8 @@ function generateEmptyCell(x: number, y: number): CellType {
 
 // Generates an empty board...
 export function getEmptyGrid(rows: number, columns: number): BoardType {
-  return new Array(rows).fill([]).map((_: [], y: number) => {
-    return new Array(columns).fill(null).map((_: null, x: number) => generateEmptyCell(x, y));
+  return new Array(rows).fill([]).map((_: [], row: number) => {
+    return new Array(columns).fill(null).map((_: null, col: number) => generateEmptyCell(row, col));
   });
 }
 
@@ -67,12 +67,12 @@ export function revealClickedCell(cell: CellType, board: BoardType): BoardType {
   const checked: Set<CellType> = new Set();
   const checkCell = (cell: CellType) => {
     checked.add(cell);
-    SURROUNDING_CELLS.forEach(([y, x]) => {
-      const row = board[cell.y + y];
+    SURROUNDING_CELLS.forEach(([rowOffset, colOffset]) => {
+      const row = board[cell.row + rowOffset];
       if (row == null) {
         return;
       }
-      const newCell = row[cell.x + x];
+      const newCell = row[cell.col + colOffset];
       if (newCell == null || newCell.bomb) {
         return;
       }
@@ -92,7 +92,7 @@ export function revealClickedCell(cell: CellType, board: BoardType): BoardType {
   }
 
   toReveal.forEach((cell) => {
-    board[cell.y][cell.x] = {...cell, state: CellStates.REVEALED};
+    board[cell.row][cell.col] = {...cell, state: CellStates.REVEALED};
   });
 
   return board;
@@ -137,6 +137,6 @@ export function countFlags(board: BoardType): number {
     .value().length;
 }
 
-export function getCellFromCords(x: number, y: number, board: BoardType): CellType | undefined {
-  return board[y][x];
+export function getCellFromCords(row: number, col: number, board: BoardType): CellType | undefined {
+  return board[row][col];
 }

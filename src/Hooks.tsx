@@ -20,15 +20,15 @@ function gameInitialize(state: GameState = DEFAULT_STATE): GameState {
   lodash(board)
     .flatten()
     .filter(
-      ({x, y}: CellType) =>
+      ({col, row}: CellType) =>
         // NOTE: Since the beginning of the game is always a crapshoot and
         // corners tend to be a good spot to start from, lets ensure there is
         // never a bomb in a corner
         !(
-          (x === 0 && y === 0) ||
-          (x === 0 && y === rows - 1) ||
-          (x === columns - 1 && y === rows - 1) ||
-          (x === columns - 1 && y === 0)
+          (col === 0 && row === 0) ||
+          (col === 0 && row === rows - 1) ||
+          (col === columns - 1 && row === rows - 1) ||
+          (col === columns - 1 && row === 0)
         )
     )
     .sampleSize(bombs)
@@ -43,7 +43,7 @@ function reducer(state: GameState, action: Actions): GameState {
       return gameInitialize(action.state || state);
     case ActionTypes.REVEAL_CELL: {
       let {board, gameOver, bombsToFlag} = state;
-      const cell = getCellFromCords(action.x, action.y, board);
+      const cell = getCellFromCords(action.row, action.col, board);
       if (cell == null) return state;
       let hasWon = false;
       if (cell.bomb) {
@@ -63,7 +63,7 @@ function reducer(state: GameState, action: Actions): GameState {
     }
     case ActionTypes.TOGGLE_FLAG_CELL: {
       const {board, bombs, started} = state;
-      const cell = getCellFromCords(action.x, action.y, board);
+      const cell = getCellFromCords(action.row, action.col, board);
       if (cell == null) return state;
       if (!started) {
         return state;
@@ -76,7 +76,7 @@ function reducer(state: GameState, action: Actions): GameState {
       } else {
         _cell = {...cell, state: CellStates.HIDDEN};
       }
-      board[_cell.y][_cell.x] = _cell;
+      board[_cell.row][_cell.col] = _cell;
       const bombsFlagged = countFlags(board);
       return {...state, board, bombsToFlag: bombs - bombsFlagged};
     }

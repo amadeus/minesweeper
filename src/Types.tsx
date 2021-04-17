@@ -2,8 +2,8 @@ import type {MouseEvent} from 'react';
 import type {CellStates, ActionTypes} from './Constants';
 
 export interface CellType {
-  x: number;
-  y: number;
+  row: number;
+  col: number;
   state: CellStates;
   bomb: boolean;
   touching: number;
@@ -33,14 +33,14 @@ export interface ActionResetGame {
 
 export interface ActionRevealCell {
   type: ActionTypes.REVEAL_CELL;
-  x: number;
-  y: number;
+  row: number;
+  col: number;
 }
 
 export interface ActionToggleFlagCell {
   type: ActionTypes.TOGGLE_FLAG_CELL;
-  x: number;
-  y: number;
+  row: number;
+  col: number;
 }
 
 export interface ActionSetGameOver {
