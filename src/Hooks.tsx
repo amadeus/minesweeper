@@ -59,7 +59,7 @@ function reducer(state: GameState, action: Actions): GameState {
           bombsToFlag = 0;
         }
       }
-      return {...state, board, hasWon, gameOver, bombsToFlag, started: true};
+      return {...state, board, hasWon, gameOver, bombsToFlag, started: true, mouseDown: false};
     }
     case ActionTypes.TOGGLE_FLAG_CELL: {
       const {board, bombs, started} = state;
@@ -84,6 +84,12 @@ function reducer(state: GameState, action: Actions): GameState {
       let {board} = state;
       board = setLosingBoard(null, board);
       return {...state, board, gameOver: true, hasWon: false};
+    }
+    case ActionTypes.MOUSE_DOWN: {
+      return {...state, mouseDown: true};
+    }
+    case ActionTypes.MOUSE_UP: {
+      return {...state, mouseDown: false};
     }
     default:
       return state;

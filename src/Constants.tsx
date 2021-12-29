@@ -33,6 +33,8 @@ export enum ActionTypes {
   REVEAL_CELL = 'REVEAL_CELL',
   SET_GAME_OVER = 'SET_GAME_OVER',
   TOGGLE_FLAG_CELL = 'TOGGLE_FLAG_CELL',
+  MOUSE_DOWN = 'MOUSE_DOWN',
+  MOUSE_UP = 'MOUSE_UP',
 }
 
 export enum MenuGroups {
