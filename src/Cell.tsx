@@ -93,10 +93,11 @@ function preventDefault(event: React.MouseEvent<HTMLElement>) {
   event.preventDefault();
 }
 
-function handleMouseDown({button}: MouseEventType, setMouseState: MouseStateSetter) {
+function handleMouseDown({button}: MouseEventType, setMouseState: MouseStateSetter, dispatch: Dispatch) {
   setMouseState((state) => {
     switch (button) {
       case 0: // primary
+        dispatch({type: ActionTypes.MOUSE_DOWN});
         return {...state, primary: true};
       case 2: // secondary
         return {...state, secondary: true};
@@ -137,8 +138,15 @@ export default function Cell({cell, board, dispatch}: CellProps) {
       })}
       onContextMenu={preventDefault}
       onClick={preventDefault}
-      onMouseDown={isClickable(cell) ? (event) => handleMouseDown(event, setMouseState) : undefined}
-      onMouseLeave={isMouseDown(mouseState) ? () => setMouseState(() => DEFAULT_MOUSE_STATE) : undefined}
+      onMouseDown={isClickable(cell) ? (event) => handleMouseDown(event, setMouseState, dispatch) : undefined}
+      onMouseLeave={
+        isMouseDown(mouseState)
+          ? () => {
+              dispatch({type: ActionTypes.MOUSE_UP});
+              setMouseState(() => DEFAULT_MOUSE_STATE);
+            }
+          : undefined
+      }
       onMouseUp={isMouseDown(mouseState) ? (event) => handleMouseUp(event, setMouseState, cell, dispatch) : undefined}>
       {showTouchingNumber(cell) ? (
         <span className={classNames(styles.touching, getTouchingClass(cell))}>{cell.touching}</span>

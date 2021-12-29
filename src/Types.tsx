@@ -47,6 +47,20 @@ export interface ActionSetGameOver {
   type: ActionTypes.SET_GAME_OVER;
 }
 
-export type Actions = ActionResetGame | ActionRevealCell | ActionToggleFlagCell | ActionSetGameOver;
+export interface ActionMouseDown {
+  type: ActionTypes.MOUSE_DOWN;
+}
+
+export interface ActionMouseUp {
+  type: ActionTypes.MOUSE_UP;
+}
+
+export type Actions =
+  | ActionResetGame
+  | ActionRevealCell
+  | ActionToggleFlagCell
+  | ActionSetGameOver
+  | ActionMouseDown
+  | ActionMouseUp;
 
 export type Dispatch = (action: Actions) => void;
