@@ -2,6 +2,7 @@
   "name": "minesweeper",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "classnames": "2.5.1",
     "lodash": "4.17.21",
