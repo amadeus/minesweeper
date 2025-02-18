@@ -1,17 +1,10 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Helment from 'react-helmet';
+import {StrictMode} from 'react';
+import ReactDOM from 'react-dom/client';
 import Minesweeper from './Minesweeper';
 import './index.css';
 
-const root = document.getElementById('root');
-root != null &&
-  ReactDOM.render(
-    <>
-      <Helment>
-        <title>Minesweeper</title>
-      </Helment>
-      <Minesweeper />
-    </>,
-    root
-  );
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <Minesweeper />
+  </StrictMode>
+);

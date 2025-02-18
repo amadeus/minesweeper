@@ -96,14 +96,12 @@ function reducer(state: GameState, action: Actions): GameState {
   }
 }
 
-type ReducerType = (state: GameState, action: Actions) => GameState;
-
 interface MinesweeperState {
   state: GameState;
   dispatch: Dispatch;
 }
 
 export function useMinesweeperState(initialState: GameState = DEFAULT_STATE): MinesweeperState {
-  const [state, dispatch] = useReducer<ReducerType, GameState>(reducer, initialState, gameInitialize);
+  const [state, dispatch] = useReducer(reducer, initialState, gameInitialize);
   return {state, dispatch};
 }
