@@ -76,17 +76,16 @@ function getTouchingClass(cell: CellType): string | undefined {
   }
 }
 
-interface MouseState {
-  primary: boolean;
-  secondary: boolean;
-}
-
 type MouseStateSetter = (arg: ((arg: MouseState) => MouseState) | MouseState) => void;
 
-const DEFAULT_MOUSE_STATE: MouseState = {primary: false, secondary: false};
+enum MouseState {
+  UP,
+  PRIMARY,
+  SECONDARY,
+}
 
 function isMouseDown(mouseState: MouseState) {
-  return mouseState.primary || mouseState.secondary;
+  return mouseState > 0;
 }
 
 function preventDefault(event: React.MouseEvent<HTMLElement>) {
@@ -94,17 +93,15 @@ function preventDefault(event: React.MouseEvent<HTMLElement>) {
 }
 
 function handleMouseDown({button}: MouseEventType, setMouseState: MouseStateSetter, dispatch: Dispatch) {
-  setMouseState((state) => {
-    switch (button) {
-      case 0: // primary
-        dispatch({type: ActionTypes.MOUSE_DOWN});
-        return {...state, primary: true};
-      case 2: // secondary
-        return {...state, secondary: true};
-      default:
-        return state;
-    }
-  });
+  switch (button) {
+    case 0: // primary
+      dispatch({type: ActionTypes.MOUSE_DOWN});
+      setMouseState(MouseState.PRIMARY);
+      break;
+    case 2: // secondary
+      setMouseState(MouseState.SECONDARY);
+      break;
+  }
 }
 
 function handleMouseUp(event: MouseEventType, setMouseState: MouseStateSetter, cell: CellType, dispatch: Dispatch) {
@@ -120,7 +117,7 @@ function handleMouseUp(event: MouseEventType, setMouseState: MouseStateSetter, c
     default:
       break;
   }
-  setMouseState(() => DEFAULT_MOUSE_STATE);
+  setMouseState(MouseState.UP);
 }
 
 interface CellProps {
@@ -130,11 +127,11 @@ interface CellProps {
 }
 
 export default function Cell({cell, board, dispatch}: CellProps) {
-  const [mouseState, setMouseState] = React.useState<MouseState>(DEFAULT_MOUSE_STATE);
+  const [mouseState, setMouseState] = React.useState<MouseState>(MouseState.UP);
   return (
     <div
       className={classNames(styles.container, getStateClass(cell), {
-        [styles.active]: mouseState.primary && cell.state === CellStates.HIDDEN,
+        [styles.active]: mouseState === MouseState.PRIMARY && cell.state === CellStates.HIDDEN,
       })}
       onContextMenu={preventDefault}
       onClick={preventDefault}
@@ -143,7 +140,7 @@ export default function Cell({cell, board, dispatch}: CellProps) {
         isMouseDown(mouseState)
           ? () => {
               dispatch({type: ActionTypes.MOUSE_UP});
-              setMouseState(() => DEFAULT_MOUSE_STATE);
+              setMouseState(MouseState.UP);
             }
           : undefined
       }
