@@ -1,6 +1,5 @@
 import React, {memo} from 'react';
 import classNames from 'classnames';
-import lodash from 'lodash';
 import FaceButton, {FaceTypes} from './FaceButton';
 import LCDDisplay from './LCDDisplay';
 import Timer from './Timer';
@@ -8,6 +7,7 @@ import Board from './Board';
 import Cell from './Cell';
 import Window from './Window';
 import Menus from './Menus';
+import {iterateOverBoard} from './Utils';
 import {useMinesweeperState} from './Hooks';
 import {ActionTypes} from './Constants';
 import type {GameState, Dispatch} from './Types';
@@ -49,12 +49,13 @@ interface GameBoardProps {
 
 function GameBoard({state, dispatch}: GameBoardProps) {
   const {board, rows, columns, gameOver} = state;
+  const cells: React.ReactNode[] = [];
+  iterateOverBoard(board, (cell) => {
+    cells.push(<MemoizedCell key={`${cell.row}x${cell.col}`} cell={cell} board={board} dispatch={dispatch} />);
+  });
   return (
     <Board rows={rows} columns={columns} disable={gameOver}>
-      {lodash(board)
-        .flatten()
-        .map((cell) => <MemoizedCell key={`${cell.row}x${cell.col}`} cell={cell} board={board} dispatch={dispatch} />)
-        .value()}
+      {cells}
     </Board>
   );
 }
