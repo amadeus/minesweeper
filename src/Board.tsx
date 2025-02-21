@@ -1,4 +1,3 @@
-import React, {ReactNode} from 'react';
 import classNames from 'classnames';
 import {CELL_SIZE} from './Constants';
 import sharedStyles from './Shared.module.css';
@@ -8,7 +7,7 @@ interface BoardProps {
   rows: number;
   columns: number;
   disable?: boolean;
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export default function Board({rows, columns, children, disable = false}: BoardProps) {
