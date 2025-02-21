@@ -10,25 +10,35 @@
     "typescript": "5.7.3"
   },
   "devDependencies": {
+    "@eslint/js": "9.20.0",
+    "@types/bun": "latest",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
-    "@vitejs/plugin-react": "4.3.4",
+    "@vitejs/plugin-react-swc": "3.8.0",
+    "eslint": "9.20.1",
+    "eslint-plugin-react": "7.37.4",
+    "eslint-plugin-react-hooks": "5.1.0",
+    "globals": "16.0.0",
     "prettier": "3.5.1",
+    "typescript-eslint": "8.24.1",
     "vite": "6.1.0"
   },
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
-    "prettier": "prettier -w ./"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
+    "prettier": "prettier -w ./",
+    "lint": "eslint",
+    "lint-fix": "eslint --fix"
   },
   "browserslist": [
     ">0.2%",
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "module": "index.ts",
+  "peerDependencies": {
+    "typescript": "5.7.3"
+  }
 }

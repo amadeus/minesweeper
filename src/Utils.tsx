@@ -38,7 +38,7 @@ function mapEachCell(board: BoardType, callback: (cell: CellType) => CellType): 
   return board.map((row) => row.map(callback));
 }
 
-function getSurroundingBombs({row, col, bomb, state}: CellType, board: BoardType): number {
+function getSurroundingBombs({row, col, bomb}: CellType, board: BoardType): number {
   if (bomb) {
     return 0;
   }
@@ -108,12 +108,14 @@ export function revealClickedCell(cell: CellType, board: BoardType): BoardType {
     // https://jsperf.com/array-from-vs-new-set/1
     const cells = Array.from(toCheck);
     toCheck.clear();
-    cells.forEach(checkCell);
+    for (const cell of cells) {
+      checkCell(cell);
+    }
   }
 
-  toReveal.forEach((cell) => {
+  for (const cell of toReveal) {
     board[cell.row][cell.col] = {...cell, state: CellStates.REVEALED};
-  });
+  }
 
   return board;
 }
