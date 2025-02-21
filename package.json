@@ -20,7 +20,7 @@
     "vite": "6.1.0"
   },
   "scripts": {
-    "dev": "bun vite",
+    "dev": "bun vite --host",
     "build": "bun vite build",
     "preview": "bun vite preview"
   },
