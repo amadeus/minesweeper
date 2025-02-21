@@ -17,7 +17,7 @@ import type {GameState, Actions, Dispatch, CellType} from './Types';
 let gameCounter = -1;
 
 function gameInitialize(state: GameState = DEFAULT_STATE): GameState {
-  let {rows, columns, bombs} = state;
+  let {rows, columns, bombs, bombs: bombsToFlag} = state;
   let board = getEmptyGrid(rows, columns);
   const sampleCells: CellType[] = [];
   iterateOverBoard(board, (cell, row, col) => {
@@ -44,7 +44,7 @@ function gameInitialize(state: GameState = DEFAULT_STATE): GameState {
     bombs--;
   }
   board = precomputeSurroundingBombs(board);
-  return {...state, board, bombsToFlag: bombs, id: `${++gameCounter}`, started: false, hasWon: false, gameOver: false};
+  return {...state, board, bombsToFlag, id: `${++gameCounter}`, started: false, hasWon: false, gameOver: false};
 }
 
 function reducer(state: GameState, action: Actions): GameState {
