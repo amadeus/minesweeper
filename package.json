@@ -28,7 +28,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "prettier": "prettier -w ./",
-    "lint": "eslint"
+    "lint": "eslint",
+    "lint-fix": "eslint --fix"
   },
   "browserslist": [
     ">0.2%",
