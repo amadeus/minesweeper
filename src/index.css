@@ -1,6 +1,8 @@
 @font-face {
   font-family: 'MS Sans Serif';
-  src: url('./assets/MSSansSerif.woff2') format('woff2'), url('./assets/MSSansSerif.woff2') format('truetype');
+  src:
+    url('./assets/MSSansSerif.woff2') format('woff2'),
+    url('./assets/MSSansSerif.woff2') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: fallback;
@@ -8,7 +10,9 @@
 
 @font-face {
   font-family: 'MS Sans Serif';
-  src: url('./assets/MSSansSerifBold.woff2') format('woff2'), url('./assets/MSSansSerifBold.woff2') format('truetype');
+  src:
+    url('./assets/MSSansSerifBold.woff2') format('woff2'),
+    url('./assets/MSSansSerifBold.woff2') format('truetype');
   font-weight: bold;
   font-style: normal;
   font-display: fallback;
@@ -24,7 +28,9 @@ body {
   height: 100%;
   user-select: none;
   font-size: 11px;
-  font-family: MS Sans Serif, sans-serif;
+  font-family:
+    MS Sans Serif,
+    sans-serif;
   -webkit-font-smoothing: none;
   font-smoothing: none;
 }
