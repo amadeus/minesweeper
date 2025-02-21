@@ -38,7 +38,7 @@ function mapEachCell(board: BoardType, callback: (cell: CellType) => CellType): 
   return board.map((row) => row.map(callback));
 }
 
-function getSurroundingBombs({row, col, bomb, state}: CellType, board: BoardType): number {
+function getSurroundingBombs({row, col, bomb}: CellType, board: BoardType): number {
   if (bomb) {
     return 0;
   }

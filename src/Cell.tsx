@@ -2,7 +2,7 @@ import * as React from 'react';
 import classNames from 'classnames';
 import {CellStates, ActionTypes} from './Constants';
 import styles from './Cell.module.css';
-import type {CellType, BoardType, MouseEventType, Dispatch} from './Types';
+import type {CellType, MouseEventType, Dispatch} from './Types';
 
 function getStateClass(cell: CellType): string | undefined {
   switch (cell.state) {
@@ -109,10 +109,14 @@ function handleMouseUp(event: MouseEventType, setMouseState: MouseStateSetter, c
   const {row, col} = cell;
   switch (event.button) {
     case 0: // primary
-      cell.state === CellStates.HIDDEN && dispatch({type: ActionTypes.REVEAL_CELL, col, row});
+      if (cell.state === CellStates.HIDDEN) {
+        dispatch({type: ActionTypes.REVEAL_CELL, col, row});
+      }
       break;
     case 2: // secondary
-      isFlaggable(cell) && dispatch({type: ActionTypes.TOGGLE_FLAG_CELL, col, row});
+      if (isFlaggable(cell)) {
+        dispatch({type: ActionTypes.TOGGLE_FLAG_CELL, col, row});
+      }
       break;
     default:
       break;
@@ -122,11 +126,10 @@ function handleMouseUp(event: MouseEventType, setMouseState: MouseStateSetter, c
 
 interface CellProps {
   cell: CellType;
-  board: BoardType;
   dispatch: Dispatch;
 }
 
-export default function Cell({cell, board, dispatch}: CellProps) {
+export default function Cell({cell, dispatch}: CellProps) {
   const [mouseState, setMouseState] = React.useState<MouseState>(MouseState.UP);
   return (
     <div

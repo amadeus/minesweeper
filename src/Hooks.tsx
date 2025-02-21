@@ -17,7 +17,8 @@ import type {GameState, Actions, Dispatch, CellType} from './Types';
 let gameCounter = -1;
 
 function gameInitialize(state: GameState = DEFAULT_STATE): GameState {
-  let {rows, columns, bombs, bombs: bombsToFlag} = state;
+  const {rows, columns, bombs: bombsToFlag} = state;
+  let {bombs} = state;
   let board = getEmptyGrid(rows, columns);
   const sampleCells: CellType[] = [];
   iterateOverBoard(board, (cell, row, col) => {

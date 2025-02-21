@@ -71,7 +71,7 @@ export default function Menus({dispatch}: MenusProps) {
   });
   return (
     <>
-      {Object.keys(MenuItems).map<React.ReactNode>((name, index) => (
+      {Object.keys(MenuItems).map<React.ReactNode>((name) => (
         <MenuItem
           key={name}
           active={name === selectedMenu}
