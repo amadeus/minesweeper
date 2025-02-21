@@ -6,7 +6,7 @@ You can check out a recent version of it [here](https://minesweeper.amadeus.wtf/
 
 ## Development
 
-If you want to play around with this, feel free.  The only major system
+If you want to play around with this, feel free. The only major system
 requirement is [bun](https://bun.sh/) Just run a quick:
 
 ```
@@ -29,6 +29,6 @@ bun run tsc
 
 ## Todo
 
-* Custom Game configuration
-* Improve mobile support? Maybe?
-* Bugs? Probably
+- Custom Game configuration
+- Improve mobile support? Maybe?
+- Bugs? Probably
