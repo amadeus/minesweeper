@@ -25,6 +25,6 @@ export default function Timer({started, gameOver, dispatch}: TimerProps) {
       }, 1000);
     }
     return () => clearTimeout(timeoutID);
-  }, [time, started, gameOver]);
+  }, [time, started, gameOver, dispatch]);
   return <LCDDisplay value={time} digits={3} />;
 }
