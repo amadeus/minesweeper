@@ -1,6 +1,4 @@
 import {useReducer} from 'react';
-import lodash from 'lodash';
-import {v4} from 'uuid';
 import {
   getEmptyGrid,
   precomputeSurroundingBombs,
@@ -10,31 +8,43 @@ import {
   checkHasWon,
   setWinningBoard,
   getCellFromCords,
+  iterateOverBoard,
+  getRandomInt,
 } from './Utils';
 import {CellStates, DEFAULT_STATE, ActionTypes} from './Constants';
 import type {GameState, Actions, Dispatch, CellType} from './Types';
 
+let gameCounter = -1;
+
 function gameInitialize(state: GameState = DEFAULT_STATE): GameState {
-  const {rows, columns, bombs} = state;
+  let {rows, columns, bombs, bombs: bombsToFlag} = state;
   let board = getEmptyGrid(rows, columns);
-  lodash(board)
-    .flatten()
-    .filter(
-      ({col, row}: CellType) =>
-        // NOTE: Since the beginning of the game is always a crapshoot and
-        // corners tend to be a good spot to start from, lets ensure there is
-        // never a bomb in a corner
-        !(
-          (col === 0 && row === 0) ||
-          (col === 0 && row === rows - 1) ||
-          (col === columns - 1 && row === rows - 1) ||
-          (col === columns - 1 && row === 0)
-        )
-    )
-    .sampleSize(bombs)
-    .forEach((cell) => (cell.bomb = true));
+  const sampleCells: CellType[] = [];
+  iterateOverBoard(board, (cell, row, col) => {
+    // NOTE: Since the beginning of the game is always a crapshoot and
+    // corners tend to be a good spot to start from, lets ensure there is
+    // never a bomb in a corner
+    if (
+      !(
+        (col === 0 && row === 0) ||
+        (col === 0 && row === rows - 1) ||
+        (col === columns - 1 && row === rows - 1) ||
+        (col === columns - 1 && row === 0)
+      )
+    ) {
+      sampleCells.push(cell);
+    }
+  });
+  while (bombs > 0 && sampleCells.length > 0) {
+    const cell = sampleCells.splice(getRandomInt(sampleCells.length), 1)[0];
+    if (cell == null) {
+      throw new Error('gameInitialize: Cell does not exist');
+    }
+    cell.bomb = true;
+    bombs--;
+  }
   board = precomputeSurroundingBombs(board);
-  return {...state, board, bombsToFlag: bombs, id: v4(), started: false, hasWon: false, gameOver: false};
+  return {...state, board, bombsToFlag, id: `${++gameCounter}`, started: false, hasWon: false, gameOver: false};
 }
 
 function reducer(state: GameState, action: Actions): GameState {

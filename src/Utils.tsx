@@ -1,6 +1,26 @@
 import type {CellType, BoardType} from './Types';
-import lodash from 'lodash';
 import {CellStates} from './Constants';
+
+type CellIterator = (cell: CellType, row: number, column: number) => boolean | undefined | void;
+
+export function iterateOverBoard(board: BoardType, callback: CellIterator): CellType | undefined {
+  for (let r = 0; r < board.length; r++) {
+    const row = board[r];
+    if (row == null) throw new Error(`iterateOverBoard: row: ${r} doesn't exist`);
+    for (let c = 0; c < row.length; c++) {
+      const cell = row[c];
+      if (cell == null) throw new Error(`iterateOverBoard: col on row: ${r} doesn't exist`);
+      if (callback(cell, r, c) === true) {
+        return cell;
+      }
+    }
+  }
+  return undefined;
+}
+
+export function getRandomInt(high: number, low: number = 0): number {
+  return Math.floor(Math.random() * (high - low) + low);
+}
 
 // This array is used to `forEach` around a cell to check its siblings
 const SURROUNDING_CELLS = [
@@ -98,12 +118,9 @@ export function revealClickedCell(cell: CellType, board: BoardType): BoardType {
   return board;
 }
 
-// Game has been won if only the bombs are hidden
+// We have won the game if all unrevealed cells are bombs
 export function checkHasWon(board: BoardType): boolean {
-  return !lodash(board)
-    .flatten()
-    .filter((cell: CellType) => cell.state !== CellStates.REVEALED)
-    .some((cell: CellType) => !cell.bomb);
+  return iterateOverBoard(board, (cell) => cell.state !== CellStates.REVEALED && !cell.bomb) == null;
 }
 
 // Reveal all bombs and highlight the one clicked
@@ -131,10 +148,14 @@ export function setWinningBoard(board: BoardType): BoardType {
 
 // Count the number of flags on a board...
 export function countFlags(board: BoardType): number {
-  return lodash(board)
-    .flatten()
-    .filter((cell: CellType) => cell.state === CellStates.FLAGGED)
-    .value().length;
+  let flagCount = 0;
+  iterateOverBoard(board, (cell) => {
+    if (cell.state === CellStates.FLAGGED) {
+      flagCount++;
+    }
+    return false;
+  });
+  return flagCount;
 }
 
 export function getCellFromCords(row: number, col: number, board: BoardType): CellType | undefined {
