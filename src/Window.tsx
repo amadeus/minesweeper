@@ -21,7 +21,7 @@ interface TitleBarButtonProps {
 
 function TitleBarButton({ children, className }: TitleBarButtonProps) {
   return (
-    <div className={classNames(styles.button, styles.nonDraggable, className)} data-window-no-drag>
+    <div className={classNames(styles.button, styles.nonDraggable, className)} data-no-drag>
       {children}
     </div>
   );
@@ -80,9 +80,9 @@ interface TitleBarProps {
   children: React.ReactNode;
 }
 
-const TitleBar = React.forwardRef<HTMLDivElement, TitleBarProps>(function TitleBar({ children }, ref) {
+function TitleBar({ children }: TitleBarProps) {
   return (
-    <div ref={ref} className={styles.titleBar} data-window-drag-handle>
+    <div className={styles.titleBar} data-drag-handle>
       <TitleBarButton>
         <LineIcon />
       </TitleBarButton>
@@ -92,18 +92,19 @@ const TitleBar = React.forwardRef<HTMLDivElement, TitleBarProps>(function TitleB
       </TitleBarButton>
     </div>
   );
-});
+}
 
 interface WindowProps {
   title: React.ReactNode;
   renderMenuItems?: () => React.ReactNode;
   overlay?: React.ReactNode;
   children: React.ReactNode;
+  draggable?: boolean;
 }
 
-export default function Window({ children, title, renderMenuItems, overlay }: WindowProps) {
+export default function Window({ children, title, renderMenuItems, overlay, draggable = true }: WindowProps) {
   return (
-    <div className={styles.window} data-window-root>
+    <div className={styles.window} {...(draggable ? { 'data-draggable': '' } : {})}>
       <TitleBar>{title}</TitleBar>
       {renderMenuItems != null ? <MenuBar>{renderMenuItems()}</MenuBar> : null}
       {children}

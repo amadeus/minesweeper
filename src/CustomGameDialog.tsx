@@ -52,67 +52,65 @@ export default function CustomGameDialog({ initialConfig, onClose, onSubmit }: C
   return (
     <div className={styles.root}>
       <div className={styles.backdrop} onClick={onClose} />
-      <div className={styles.dialog}>
-        <Window title="Custom Field">
-          <form className={styles.form} noValidate onSubmit={handleSubmit}>
-            <div className={styles.fields}>
-              <label className={styles.label} htmlFor="custom-columns">
-                Width:
-              </label>
-              <input
-                id="custom-columns"
-                className={classNames(styles.input, sharedStyles.inset, { [styles.inputInvalid]: isColumnsInvalid })}
-                inputMode="numeric"
-                placeholder={`${MIN_CUSTOM_COLUMNS}`}
-                min={MIN_CUSTOM_COLUMNS}
-                max={MAX_CUSTOM_COLUMNS}
-                name="columns"
-                type="number"
-                value={cleanNaN(values.columns)}
-                onChange={handleChange('columns')}
-              />
-              <span className={styles.suffix}>/ {MAX_CUSTOM_COLUMNS}</span>
-              <label className={styles.label} htmlFor="custom-rows">
-                Height:
-              </label>
-              <input
-                id="custom-rows"
-                className={classNames(styles.input, sharedStyles.inset, { [styles.inputInvalid]: isRowsInvalid })}
-                inputMode="numeric"
-                placeholder={`${MIN_CUSTOM_ROWS}`}
-                min={MIN_CUSTOM_ROWS}
-                max={MAX_CUSTOM_ROWS}
-                name="rows"
-                type="number"
-                value={cleanNaN(values.rows)}
-                onChange={handleChange('rows')}
-              />
-              <span className={styles.suffix}>/ {MAX_CUSTOM_ROWS}</span>
-              <label className={styles.label} htmlFor="custom-bombs">
-                Mines:
-              </label>
-              <input
-                id="custom-bombs"
-                className={classNames(styles.input, sharedStyles.inset, { [styles.inputInvalid]: isBombsInvalid })}
-                inputMode="numeric"
-                placeholder={`${MIN_CUSTOM_BOMBS}`}
-                min={MIN_CUSTOM_BOMBS}
-                max={bombMax}
-                name="bombs"
-                type="number"
-                value={cleanNaN(values.bombs)}
-                onChange={handleChange('bombs')}
-              />
-              <span className={styles.suffix}>/ {bombMax}</span>
-            </div>
-            <div className={styles.actions}>
-              <button className={`${styles.button} ${sharedStyles.outset}`} type="submit">
-                OK
-              </button>
-            </div>
-          </form>
-        </Window>
-      </div>
+      <Window title="Custom Field">
+        <form className={styles.form} noValidate onSubmit={handleSubmit}>
+          <div className={styles.fields}>
+            <label className={styles.label} htmlFor="custom-columns">
+              Width:
+            </label>
+            <input
+              id="custom-columns"
+              className={classNames(styles.input, sharedStyles.inset, { [styles.inputInvalid]: isColumnsInvalid })}
+              inputMode="numeric"
+              placeholder={`${MIN_CUSTOM_COLUMNS}`}
+              min={MIN_CUSTOM_COLUMNS}
+              max={MAX_CUSTOM_COLUMNS}
+              name="columns"
+              type="number"
+              value={cleanNaN(values.columns)}
+              onChange={handleChange('columns')}
+            />
+            <span className={styles.suffix}>/ {MAX_CUSTOM_COLUMNS}</span>
+            <label className={styles.label} htmlFor="custom-rows">
+              Height:
+            </label>
+            <input
+              id="custom-rows"
+              className={classNames(styles.input, sharedStyles.inset, { [styles.inputInvalid]: isRowsInvalid })}
+              inputMode="numeric"
+              placeholder={`${MIN_CUSTOM_ROWS}`}
+              min={MIN_CUSTOM_ROWS}
+              max={MAX_CUSTOM_ROWS}
+              name="rows"
+              type="number"
+              value={cleanNaN(values.rows)}
+              onChange={handleChange('rows')}
+            />
+            <span className={styles.suffix}>/ {MAX_CUSTOM_ROWS}</span>
+            <label className={styles.label} htmlFor="custom-bombs">
+              Mines:
+            </label>
+            <input
+              id="custom-bombs"
+              className={classNames(styles.input, sharedStyles.inset, { [styles.inputInvalid]: isBombsInvalid })}
+              inputMode="numeric"
+              placeholder={`${MIN_CUSTOM_BOMBS}`}
+              min={MIN_CUSTOM_BOMBS}
+              max={bombMax}
+              name="bombs"
+              type="number"
+              value={cleanNaN(values.bombs)}
+              onChange={handleChange('bombs')}
+            />
+            <span className={styles.suffix}>/ {bombMax}</span>
+          </div>
+          <div className={styles.actions}>
+            <button className={`${styles.button} ${sharedStyles.outset}`} type="submit">
+              OK
+            </button>
+          </div>
+        </form>
+      </Window>
     </div>
   );
 }

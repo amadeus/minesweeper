@@ -13,11 +13,6 @@
   background-color: rgba(0, 0, 0, 0.6);
 }
 
-.dialog {
-  position: relative;
-  max-width: calc(100vw - 32px);
-}
-
 .form {
   display: grid;
   grid-template-columns: 1fr auto;

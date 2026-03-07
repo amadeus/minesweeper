@@ -1,7 +1,17 @@
 .window {
+  --drag-x: 0px;
+  --drag-y: 0px;
   position: relative;
   border: 1px solid #000;
   background-color: #c3c3c3;
+}
+
+.window[data-draggable] {
+  transform: translate(var(--drag-x, 0), var(--drag-y, 0));
+}
+
+.window[data-dragging='true'] {
+  will-change: transform;
 }
 
 .overlay {
