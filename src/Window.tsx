@@ -95,6 +95,7 @@ function TitleBar({ children }: TitleBarProps) {
 }
 
 interface WindowProps {
+  className?: string;
   title: React.ReactNode;
   renderMenuItems?: () => React.ReactNode;
   overlay?: React.ReactNode;
@@ -102,13 +103,18 @@ interface WindowProps {
   draggable?: boolean;
 }
 
-export default function Window({ children, title, renderMenuItems, overlay, draggable = true }: WindowProps) {
+const Window = React.forwardRef<HTMLDivElement, WindowProps>(function Window(
+  { children, className, title, renderMenuItems, overlay, draggable = true },
+  ref
+) {
   return (
-    <div className={styles.window} {...(draggable ? { 'data-draggable': '' } : {})}>
+    <div ref={ref} className={classNames(styles.window, className)} {...(draggable ? { 'data-draggable': '' } : {})}>
       <TitleBar>{title}</TitleBar>
       {renderMenuItems != null ? <MenuBar>{renderMenuItems()}</MenuBar> : null}
       {children}
       {overlay != null ? <div className={styles.overlay}>{overlay}</div> : null}
     </div>
   );
-}
+});
+
+export default Window;

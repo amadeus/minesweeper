@@ -16,17 +16,24 @@ import styles from '@/CustomGameDialog.module.css';
 import sharedStyles from '@/Shared.module.css';
 
 interface CustomGameDialogProps {
+  anchorRect: DOMRect | null;
   initialConfig: GameConfig;
-  onClose: () => void;
-  onSubmit: (config: GameConfig) => void;
+  onClose(): void;
+  onSubmit(config: GameConfig): void;
 }
 
-export default function CustomGameDialog({ initialConfig, onClose, onSubmit }: CustomGameDialogProps) {
+export default React.memo(function CustomGameDialog({
+  anchorRect,
+  initialConfig,
+  onClose,
+  onSubmit,
+}: CustomGameDialogProps) {
   const [values, setValues] = React.useState<GameConfig>(() => ({ ...initialConfig }));
+  const windowRef = React.useRef<HTMLDivElement>(null);
 
   const bombMax = getMaximumCustomBombs(
     clamp(values.rows, MIN_CUSTOM_ROWS, MAX_CUSTOM_ROWS),
-    clamp(values.rows, MIN_CUSTOM_COLUMNS, MAX_CUSTOM_COLUMNS)
+    clamp(values.columns, MIN_CUSTOM_COLUMNS, MAX_CUSTOM_COLUMNS)
   );
   const isColumnsInvalid = isValueOutsideRange(values.columns, MIN_CUSTOM_COLUMNS, MAX_CUSTOM_COLUMNS);
   const isRowsInvalid = isValueOutsideRange(values.rows, MIN_CUSTOM_ROWS, MAX_CUSTOM_ROWS);
@@ -49,10 +56,36 @@ export default function CustomGameDialog({ initialConfig, onClose, onSubmit }: C
     [onSubmit, values, hasInvalidValues]
   );
 
+  React.useLayoutEffect(() => {
+    const windowElement = windowRef.current;
+    if (windowElement == null || anchorRect == null) {
+      return;
+    }
+
+    const dialogRect = windowElement.getBoundingClientRect();
+    let nextX = anchorRect.left + (anchorRect.width - dialogRect.width) / 2;
+    let nextY = anchorRect.top + (anchorRect.height - dialogRect.height) / 2;
+
+    if (dialogRect.width >= window.innerWidth) {
+      nextX = 0;
+    } else {
+      nextX = Math.min(Math.max(0, nextX), window.innerWidth - dialogRect.width);
+    }
+
+    if (dialogRect.height >= window.innerHeight) {
+      nextY = 0;
+    } else {
+      nextY = Math.min(Math.max(0, nextY), window.innerHeight - dialogRect.height);
+    }
+
+    windowElement.style.setProperty('--pos-x', `${nextX}px`);
+    windowElement.style.setProperty('--pos-y', `${nextY}px`);
+  }, [anchorRect]);
+
   return (
     <div className={styles.root}>
       <div className={styles.backdrop} onClick={onClose} />
-      <Window title="Custom Field">
+      <Window ref={windowRef} className={styles.window} title="Custom Field">
         <form className={styles.form} noValidate onSubmit={handleSubmit}>
           <div className={styles.fields}>
             <label className={styles.label} htmlFor="custom-columns">
@@ -113,4 +146,4 @@ export default function CustomGameDialog({ initialConfig, onClose, onSubmit }: C
       </Window>
     </div>
   );
-}
+});

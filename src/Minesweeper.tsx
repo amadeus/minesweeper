@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { memo } from 'react';
+import { memo, useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 import Board from '@/Board';
 import Cell from '@/Cell';
@@ -65,34 +65,33 @@ function GameBoard({ state, dispatch }: GameBoardProps) {
 
 export default function Minesweeper() {
   const { state, dispatch } = useMinesweeperState();
-  const [isCustomDialogOpen, setIsCustomDialogOpen] = React.useState(false);
-  const [customGameConfig, setCustomGameConfig] = React.useState<GameConfig>({
+  const [isCustomDialogOpen, setIsCustomDialogOpen] = useState(false);
+  const [customDialogAnchorRect, setCustomDialogAnchorRect] = useState<DOMRect | null>(null);
+  const [customGameConfig, setCustomGameConfig] = useState<GameConfig>({
     rows: DEFAULT_STATE.rows,
     columns: DEFAULT_STATE.columns,
     bombs: DEFAULT_STATE.bombs,
   });
+  const windowRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const { current: element } = windowRef;
+    if (element == null) {
+      return;
+    }
 
-  const handleNewGame = React.useCallback(() => {
-    dispatch({ type: ActionTypes.RESET_GAME });
-  }, [dispatch]);
+    const windowRect = element.getBoundingClientRect();
+    const centeredX = Math.max(0, (window.innerWidth - windowRect.width) / 2);
+    const centeredY = Math.max(0, (window.innerHeight - windowRect.height) / 2);
 
-  const handleSelectPreset = React.useCallback(
-    (config: GameConfig) => {
-      dispatch({ type: ActionTypes.RESET_GAME, state: createResetGameState(config) });
-    },
-    [dispatch]
-  );
+    element.style.setProperty('--pos-x', `${centeredX}px`);
+    element.style.setProperty('--pos-y', `${centeredY}px`);
+  }, []);
 
-  const handleOpenCustomDialog = React.useCallback(() => {
-    setCustomGameConfig({ rows: state.rows, columns: state.columns, bombs: state.bombs });
-    setIsCustomDialogOpen(true);
-  }, [state.bombs, state.columns, state.rows]);
-
-  const handleCloseCustomDialog = React.useCallback(() => {
+  const handleCloseCustomDialog = useCallback(() => {
     setIsCustomDialogOpen(false);
   }, []);
 
-  const handleSubmitCustomDialog = React.useCallback(
+  const handleSubmitCustomDialog = useCallback(
     (config: GameConfig) => {
       const normalizedConfig = normalizeCustomGameConfig(config);
       setCustomGameConfig(normalizedConfig);
@@ -102,29 +101,44 @@ export default function Minesweeper() {
     [dispatch]
   );
 
+  const renderMenuItems = useCallback(() => {
+    return (
+      <Menus
+        onNewGame={() => {
+          dispatch({ type: ActionTypes.RESET_GAME });
+        }}
+        onSelectPreset={(config: GameConfig) => {
+          dispatch({ type: ActionTypes.RESET_GAME, state: createResetGameState(config) });
+        }}
+        onOpenCustomDialog={() => {
+          setCustomGameConfig({ rows: state.rows, columns: state.columns, bombs: state.bombs });
+          setCustomDialogAnchorRect(windowRef.current?.getBoundingClientRect() ?? null);
+          setIsCustomDialogOpen(true);
+        }}
+      />
+    );
+  }, [dispatch, state.bombs, state.columns, state.rows]);
+
   return (
-    <Window
-      title="Minesweeper"
-      renderMenuItems={() => (
-        <Menus
-          onNewGame={handleNewGame}
-          onSelectPreset={handleSelectPreset}
-          onOpenCustomDialog={handleOpenCustomDialog}
+    <>
+      <Window
+        ref={windowRef}
+        className={classNames({ [styles.windowDimmed]: isCustomDialogOpen })}
+        title="Minesweeper"
+        renderMenuItems={renderMenuItems}>
+        <div className={sharedStyles.outset}>
+          <GameStatus state={state} dispatch={dispatch} />
+          <GameBoard state={state} dispatch={dispatch} />
+        </div>
+      </Window>
+      {isCustomDialogOpen ? (
+        <CustomGameDialog
+          anchorRect={customDialogAnchorRect}
+          initialConfig={customGameConfig}
+          onClose={handleCloseCustomDialog}
+          onSubmit={handleSubmitCustomDialog}
         />
-      )}
-      overlay={
-        isCustomDialogOpen ? (
-          <CustomGameDialog
-            initialConfig={customGameConfig}
-            onClose={handleCloseCustomDialog}
-            onSubmit={handleSubmitCustomDialog}
-          />
-        ) : null
-      }>
-      <div className={sharedStyles.outset}>
-        <GameStatus state={state} dispatch={dispatch} />
-        <GameBoard state={state} dispatch={dispatch} />
-      </div>
-    </Window>
+      ) : null}
+    </>
   );
 }

@@ -1,3 +1,7 @@
+.windowDimmed {
+  filter: brightness(0.5);
+}
+
 .gameStatus {
   padding: 4px 5px;
   border-width: 2px;
