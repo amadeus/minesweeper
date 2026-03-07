@@ -20,6 +20,8 @@
   display: grid;
   grid-template-columns: 18px auto 18px;
   grid-template-rows: 18px;
+  cursor: move;
+  touch-action: none;
 }
 
 .title {
@@ -34,6 +36,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.nonDraggable {
+  cursor: default;
 }
 
 .lineIcon {

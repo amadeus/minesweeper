@@ -16,10 +16,15 @@ function MinimizeIcon() {
 
 interface TitleBarButtonProps {
   children: React.ReactNode;
+  className?: string;
 }
 
-function TitleBarButton({ children }: TitleBarButtonProps) {
-  return <div className={styles.button}>{children}</div>;
+function TitleBarButton({ children, className }: TitleBarButtonProps) {
+  return (
+    <div className={classNames(styles.button, styles.nonDraggable, className)} data-window-no-drag>
+      {children}
+    </div>
+  );
 }
 
 interface MenuBarProps {
@@ -75,9 +80,9 @@ interface TitleBarProps {
   children: React.ReactNode;
 }
 
-function TitleBar({ children }: TitleBarProps) {
+const TitleBar = React.forwardRef<HTMLDivElement, TitleBarProps>(function TitleBar({ children }, ref) {
   return (
-    <div className={styles.titleBar}>
+    <div ref={ref} className={styles.titleBar} data-window-drag-handle>
       <TitleBarButton>
         <LineIcon />
       </TitleBarButton>
@@ -87,7 +92,7 @@ function TitleBar({ children }: TitleBarProps) {
       </TitleBarButton>
     </div>
   );
-}
+});
 
 interface WindowProps {
   title: React.ReactNode;
@@ -98,7 +103,7 @@ interface WindowProps {
 
 export default function Window({ children, title, renderMenuItems, overlay }: WindowProps) {
   return (
-    <div className={styles.window}>
+    <div className={styles.window} data-window-root>
       <TitleBar>{title}</TitleBar>
       {renderMenuItems != null ? <MenuBar>{renderMenuItems()}</MenuBar> : null}
       {children}
