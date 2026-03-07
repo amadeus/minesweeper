@@ -88,6 +88,7 @@ export default function CustomGameDialog({ anchorRect, initialConfig, onClose, o
             </label>
             <input
               id="custom-columns"
+              autoFocus
               className={classNames(styles.input, sharedStyles.inset, { [styles.inputInvalid]: isColumnsInvalid })}
               inputMode="numeric"
               placeholder={`${MIN_CUSTOM_COLUMNS}`}
