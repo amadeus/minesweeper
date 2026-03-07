@@ -82,6 +82,37 @@ export function precomputeSurroundingBombs(board: BoardType): BoardType {
   }));
 }
 
+export function populateBoardWithBombs(board: BoardType, bombs: number, safeRow: number, safeCol: number): BoardType {
+  const nextBoard = mapEachCell(board, (cell) => ({
+    ...cell,
+    bomb: false,
+    touching: 0,
+  }));
+  const sampleCells: CellType[] = [];
+
+  iterateOverBoard(nextBoard, (cell) => {
+    if (cell.row !== safeRow || cell.col !== safeCol) {
+      sampleCells.push(cell);
+    }
+  });
+
+  if (bombs > sampleCells.length) {
+    throw new Error('populateBoardWithBombs: bombs exceed available cells');
+  }
+
+  let remainingBombs = bombs;
+  while (remainingBombs > 0) {
+    const cell = sampleCells.splice(getRandomInt(sampleCells.length), 1)[0];
+    if (cell == null) {
+      throw new Error('populateBoardWithBombs: Cell does not exist');
+    }
+    cell.bomb = true;
+    remainingBombs--;
+  }
+
+  return precomputeSurroundingBombs(nextBoard);
+}
+
 // Reveal the clicked cell. If the cell is empty (meaning it is not touching a
 // bomb), iterate through surrounding cells and reveal up to all touching cells
 export function revealClickedCell(cell: CellType, board: BoardType): BoardType {
