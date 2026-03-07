@@ -27,6 +27,12 @@ If you'd like to run a quick TypeScript check:
 bun run tsc
 ```
 
+If you want to lint the project:
+
+```
+bun run lint
+```
+
 ## Todo
 
 - Custom Game configuration

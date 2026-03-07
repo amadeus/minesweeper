@@ -26,10 +26,11 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
+    "tsc": "tsc --noEmit",
     "preview": "vite preview",
     "prettier": "prettier -w ./",
-    "lint": "eslint",
-    "lint-fix": "eslint --fix"
+    "lint": "eslint .",
+    "lint-fix": "eslint . --fix"
   },
   "browserslist": [
     ">0.2%",
