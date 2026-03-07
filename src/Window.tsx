@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import { forwardRef } from 'react';
 
 import type { MenuGroups } from '@/Constants';
 import type { MouseEventType } from '@/Types';
@@ -109,12 +108,20 @@ interface WindowProps {
   children: React.ReactNode;
   draggable?: boolean;
   onMinimizeClick?(): void;
+  ref?: React.Ref<HTMLDivElement>;
 }
 
-const Window = forwardRef<HTMLDivElement, WindowProps>(function Window(
-  { children, className, title, renderMenuItems, overlay, draggable = true, onMinimizeClick },
-  ref
-) {
+function Window({
+  children,
+  className,
+  title,
+  renderMenuItems,
+  overlay,
+  draggable = true,
+  onMinimizeClick,
+  ref,
+}: WindowProps) {
+  console.log(ref);
   return (
     <div ref={ref} className={classNames(styles.window, className)} {...(draggable ? { 'data-draggable': '' } : {})}>
       <TitleBar onMinimizeClick={onMinimizeClick}>{title}</TitleBar>
@@ -123,6 +130,6 @@ const Window = forwardRef<HTMLDivElement, WindowProps>(function Window(
       {overlay != null ? <div className={styles.overlay}>{overlay}</div> : null}
     </div>
   );
-});
+}
 
 export default Window;
