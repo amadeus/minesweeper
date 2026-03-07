@@ -45,6 +45,11 @@
   outline: none;
 }
 
+.input:focus,
+.input:focus-visible {
+  border-color: #000082;
+}
+
 .inputInvalid {
   color: #c00000;
 }
@@ -79,6 +84,12 @@
   cursor: pointer;
   box-shadow: 0 0 0 2px #000;
   border-radius: 1px;
+}
+
+.button:focus,
+.button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #000082;
 }
 
 .button:active {
