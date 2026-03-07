@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react"],
+  "env": {
+    "browser": true
+  },
+  "settings": {
+    "react": {
+      "version": "19.2.4"
+    }
+  },
+  "ignorePatterns": ["node_modules/", "dist/"],
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react-hooks/exhaustive-deps": "error"
+  }
+}
