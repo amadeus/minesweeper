@@ -1,0 +1,100 @@
+.root {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+.window {
+  z-index: 1;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  padding: 20px;
+  background-color: #fff;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: auto 68px auto;
+  gap: 4px;
+  align-items: center;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: bold;
+  text-align: right;
+}
+
+.input {
+  height: 30px;
+  border-width: 1px;
+  border-color: #000;
+  padding: 0 28px 0 4px;
+  font-weight: bold;
+  background-color: #fff;
+  text-align: left;
+  outline: none;
+}
+
+.input:focus,
+.input:focus-visible {
+  border-color: #000082;
+}
+
+.inputInvalid {
+  color: #c00000;
+}
+
+.suffix {
+  margin-left: -38px;
+  width: 30px;
+  color: #5a5a5a;
+  text-align: right;
+  pointer-events: none;
+}
+
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+.actions {
+  display: flex;
+  align-items: stretch;
+}
+
+.button {
+  min-width: 60px;
+  min-height: 104px;
+  border-width: 2px;
+  padding: 12px 20px;
+  background-color: #c3c3c3;
+  font: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 0 2px #000;
+  border-radius: 1px;
+}
+
+.button:focus,
+.button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #000082;
+}
+
+.button:active {
+  border-top-color: #828282;
+  border-left-color: #828282;
+  border-right-color: #fff;
+  border-bottom-color: #fff;
+}

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import * as React from 'react';
+import { forwardRef } from 'react';
 
 import type { MenuGroups } from '@/Constants';
 import type { MouseEventType } from '@/Types';
@@ -16,10 +16,21 @@ function MinimizeIcon() {
 
 interface TitleBarButtonProps {
   children: React.ReactNode;
+  className?: string;
+  onClick?(): void;
 }
 
-function TitleBarButton({ children }: TitleBarButtonProps) {
-  return <div className={styles.button}>{children}</div>;
+function TitleBarButton({ children, className, onClick }: TitleBarButtonProps) {
+  return (
+    <div
+      className={classNames(styles.button, styles.nonDraggable, className, {
+        [styles.buttonInteractive]: onClick != null,
+      })}
+      data-no-drag
+      onClick={onClick}>
+      {children}
+    </div>
+  );
 }
 
 interface MenuBarProps {
@@ -73,16 +84,17 @@ export function MenuListItem({ children, separator = false, onClick }: MenuListI
 
 interface TitleBarProps {
   children: React.ReactNode;
+  onMinimizeClick?(): void;
 }
 
-function TitleBar({ children }: TitleBarProps) {
+function TitleBar({ children, onMinimizeClick }: TitleBarProps) {
   return (
-    <div className={styles.titleBar}>
+    <div className={styles.titleBar} data-drag-handle>
       <TitleBarButton>
         <LineIcon />
       </TitleBarButton>
       <div className={styles.title}>{children}</div>
-      <TitleBarButton>
+      <TitleBarButton onClick={onMinimizeClick}>
         <MinimizeIcon />
       </TitleBarButton>
     </div>
@@ -90,17 +102,27 @@ function TitleBar({ children }: TitleBarProps) {
 }
 
 interface WindowProps {
+  className?: string;
   title: React.ReactNode;
-  renderMenuItems?: () => React.ReactNode;
+  renderMenuItems?(): React.ReactNode;
+  overlay?: React.ReactNode;
   children: React.ReactNode;
+  draggable?: boolean;
+  onMinimizeClick?(): void;
 }
 
-export default function Window({ children, title, renderMenuItems }: WindowProps) {
+const Window = forwardRef<HTMLDivElement, WindowProps>(function Window(
+  { children, className, title, renderMenuItems, overlay, draggable = true, onMinimizeClick },
+  ref
+) {
   return (
-    <div className={styles.window}>
-      <TitleBar>{title}</TitleBar>
+    <div ref={ref} className={classNames(styles.window, className)} {...(draggable ? { 'data-draggable': '' } : {})}>
+      <TitleBar onMinimizeClick={onMinimizeClick}>{title}</TitleBar>
       {renderMenuItems != null ? <MenuBar>{renderMenuItems()}</MenuBar> : null}
       {children}
+      {overlay != null ? <div className={styles.overlay}>{overlay}</div> : null}
     </div>
   );
-}
+});
+
+export default Window;

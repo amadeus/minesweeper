@@ -1,22 +1,21 @@
 import classNames from 'classnames';
-import React, { memo } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 import Board from '@/Board';
 import Cell from '@/Cell';
-import { ActionTypes } from '@/Constants';
+import { ActionTypes, DEFAULT_STATE } from '@/Constants';
+import CustomGameDialog from '@/CustomGameDialog';
 import FaceButton, { FaceTypes } from '@/FaceButton';
 import { useMinesweeperState } from '@/Hooks';
 import LCDDisplay from '@/LCDDisplay';
 import Menus from '@/Menus';
 import Timer from '@/Timer';
-import type { Dispatch, GameState } from '@/Types';
-import { iterateOverBoard } from '@/Utils';
+import type { Dispatch, GameState, GameConfig } from '@/Types';
+import { createResetGameState, iterateOverBoard, normalizeCustomGameConfig } from '@/Utils';
 import Window from '@/Window';
 
 import styles from '@/Minesweeper.module.css';
 import sharedStyles from '@/Shared.module.css';
-
-const MemoizedCell = memo(Cell);
 
 interface GameStatusProps {
   state: GameState;
@@ -51,25 +50,96 @@ interface GameBoardProps {
 
 function GameBoard({ state, dispatch }: GameBoardProps) {
   const { board, rows, columns, gameOver } = state;
-  const cells: React.ReactNode[] = [];
-  iterateOverBoard(board, (cell) => {
-    cells.push(<MemoizedCell key={`${cell.row}x${cell.col}`} cell={cell} dispatch={dispatch} />);
-  });
+  function computeCells() {
+    const cells: React.ReactNode[] = [];
+    iterateOverBoard(board, (cell) => {
+      cells.push(<Cell key={`${cell.row}x${cell.col}`} cell={cell} dispatch={dispatch} />);
+    });
+    return cells;
+  }
   return (
     <Board rows={rows} columns={columns} disable={gameOver}>
-      {cells}
+      {computeCells()}
     </Board>
   );
 }
 
 export default function Minesweeper() {
   const { state, dispatch } = useMinesweeperState();
+  const [isCustomDialogOpen, setIsCustomDialogOpen] = useState(false);
+  const [customDialogAnchorRect, setCustomDialogAnchorRect] = useState<DOMRect | null>(null);
+  const [customGameConfig, setCustomGameConfig] = useState<GameConfig>({
+    rows: DEFAULT_STATE.rows,
+    columns: DEFAULT_STATE.columns,
+    bombs: DEFAULT_STATE.bombs,
+  });
+  const windowRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const { current: element } = windowRef;
+    if (element == null) {
+      return;
+    }
+
+    const windowRect = element.getBoundingClientRect();
+    const centeredX = Math.max(0, (window.innerWidth - windowRect.width) / 2);
+    const centeredY = Math.max(0, (window.innerHeight - windowRect.height) / 2);
+
+    element.style.setProperty('--pos-x', `${centeredX}px`);
+    element.style.setProperty('--pos-y', `${centeredY}px`);
+  }, []);
+
+  const handleCloseCustomDialog = useCallback(() => {
+    setIsCustomDialogOpen(false);
+  }, []);
+
+  const handleSubmitCustomDialog = useCallback(
+    (config: GameConfig) => {
+      const normalizedConfig = normalizeCustomGameConfig(config);
+      setCustomGameConfig(normalizedConfig);
+      setIsCustomDialogOpen(false);
+      dispatch({ type: ActionTypes.RESET_GAME, state: createResetGameState(normalizedConfig) });
+    },
+    [dispatch]
+  );
+
+  const renderMenuItems = useCallback(() => {
+    return (
+      <Menus
+        onNewGame={() => {
+          dispatch({ type: ActionTypes.RESET_GAME });
+        }}
+        onSelectPreset={(config: GameConfig) => {
+          dispatch({ type: ActionTypes.RESET_GAME, state: createResetGameState(config) });
+        }}
+        onOpenCustomDialog={() => {
+          setCustomGameConfig({ rows: state.rows, columns: state.columns, bombs: state.bombs });
+          setCustomDialogAnchorRect(windowRef.current?.getBoundingClientRect() ?? null);
+          setIsCustomDialogOpen(true);
+        }}
+      />
+    );
+  }, [dispatch, state.bombs, state.columns, state.rows]);
+
   return (
-    <Window title="Minesweeper" renderMenuItems={() => <Menus dispatch={dispatch} />}>
-      <div className={sharedStyles.outset}>
-        <GameStatus state={state} dispatch={dispatch} />
-        <GameBoard state={state} dispatch={dispatch} />
-      </div>
-    </Window>
+    <>
+      <Window
+        ref={windowRef}
+        className={classNames({ [styles.windowDimmed]: isCustomDialogOpen })}
+        title="Minesweeper"
+        renderMenuItems={renderMenuItems}>
+        <div className={sharedStyles.outset}>
+          <GameStatus state={state} dispatch={dispatch} />
+          <GameBoard state={state} dispatch={dispatch} />
+        </div>
+      </Window>
+      {isCustomDialogOpen ? (
+        <CustomGameDialog
+          anchorRect={customDialogAnchorRect}
+          initialConfig={customGameConfig}
+          onClose={handleCloseCustomDialog}
+          onSubmit={handleSubmitCustomDialog}
+        />
+      ) : null}
+    </>
   );
 }

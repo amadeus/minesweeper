@@ -2,6 +2,12 @@ import type { MouseEvent } from 'react';
 
 import type { ActionTypes, CellStates } from '@/Constants';
 
+export interface GameConfig {
+  rows: number;
+  columns: number;
+  bombs: number;
+}
+
 export interface CellType {
   row: number;
   col: number;
@@ -15,6 +21,7 @@ export type BoardType = CellType[][];
 export interface GameState {
   id: string;
   board: BoardType;
+  remainingCells: Set<string>;
   gameOver: boolean;
   hasWon: boolean;
   rows: number;

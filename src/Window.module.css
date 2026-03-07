@@ -1,6 +1,26 @@
 .window {
+  --pos-x: 0px;
+  --pos-y: 0px;
+  position: relative;
   border: 1px solid #000;
   background-color: #c3c3c3;
+}
+
+.window[data-draggable] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(var(--pos-x, 0), var(--pos-y, 0));
+}
+
+.window[data-dragging='true'] {
+  will-change: transform;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
 }
 
 .titleBar {
@@ -13,6 +33,8 @@
   display: grid;
   grid-template-columns: 18px auto 18px;
   grid-template-rows: 18px;
+  cursor: move;
+  touch-action: none;
 }
 
 .title {
@@ -27,6 +49,21 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.nonDraggable {
+  cursor: default;
+}
+
+.buttonInteractive {
+  cursor: pointer;
+}
+
+.buttonInteractive:active .minimizeIcon {
+  border-top: 2px solid #818181;
+  border-left: 2px solid #818181;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
 }
 
 .lineIcon {
@@ -87,7 +124,7 @@
 .menuList {
   position: absolute;
   top: 18px;
-  left: 0;
+  left: -1px;
   width: 142px;
   border: 1px solid #000;
   background-color: #c3c3c3;
@@ -100,6 +137,10 @@
 .menuListItem:hover {
   background-color: #000082;
   color: #fff;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+  margin-left: -1px;
+  margin-right: -1px;
 }
 
 .menuItem:first-letter,

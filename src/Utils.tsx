@@ -1,5 +1,13 @@
-import { CellStates } from '@/Constants';
-import type { BoardType, CellType } from '@/Types';
+import { CellStates, DEFAULT_STATE } from '@/Constants';
+import {
+  MAX_CLASSIC_BOMBS,
+  MAX_CUSTOM_COLUMNS,
+  MAX_CUSTOM_ROWS,
+  MIN_CUSTOM_BOMBS,
+  MIN_CUSTOM_COLUMNS,
+  MIN_CUSTOM_ROWS,
+} from '@/Constants';
+import type { BoardType, CellType, GameState, GameConfig } from '@/Types';
 
 type CellIterator = (cell: CellType, row: number, column: number) => boolean | undefined | void;
 
@@ -82,24 +90,31 @@ export function precomputeSurroundingBombs(board: BoardType): BoardType {
   }));
 }
 
-export function populateBoardWithBombs(board: BoardType, bombs: number, safeRow: number, safeCol: number): BoardType {
-  const nextBoard = mapEachCell(board, (cell) => ({
-    ...cell,
-    bomb: false,
-    touching: 0,
-  }));
+export function populateBoardWithBombs(
+  board: BoardType,
+  bombs: number,
+  remainingCells: Set<string>,
+  safeRow: number,
+  safeCol: number
+): BoardType {
   const sampleCells: CellType[] = [];
-
-  iterateOverBoard(nextBoard, (cell) => {
+  const nextBoard = mapEachCell(board, (cell) => {
+    cell = {
+      ...cell,
+      bomb: false,
+      touching: 0,
+    };
     if (cell.row !== safeRow || cell.col !== safeCol) {
       sampleCells.push(cell);
     }
+    return cell;
   });
 
   if (bombs > sampleCells.length) {
     throw new Error('populateBoardWithBombs: bombs exceed available cells');
   }
 
+  remainingCells.clear();
   let remainingBombs = bombs;
   while (remainingBombs > 0) {
     const cell = sampleCells.splice(getRandomInt(sampleCells.length), 1)[0];
@@ -109,13 +124,16 @@ export function populateBoardWithBombs(board: BoardType, bombs: number, safeRow:
     cell.bomb = true;
     remainingBombs--;
   }
+  for (const cell of sampleCells) {
+    remainingCells.add(`${cell.row}:${cell.col}`);
+  }
 
   return precomputeSurroundingBombs(nextBoard);
 }
 
 // Reveal the clicked cell. If the cell is empty (meaning it is not touching a
 // bomb), iterate through surrounding cells and reveal up to all touching cells
-export function revealClickedCell(cell: CellType, board: BoardType): BoardType {
+export function revealClickedCell(cell: CellType, board: BoardType, remainingCells: Set<string>): BoardType {
   const toCheck: Set<CellType> = new Set([cell]);
   const toReveal: Set<CellType> = new Set([cell]);
   const checked: Set<CellType> = new Set();
@@ -149,27 +167,29 @@ export function revealClickedCell(cell: CellType, board: BoardType): BoardType {
 
   for (const cell of toReveal) {
     board[cell.row][cell.col] = { ...cell, state: CellStates.REVEALED };
+    remainingCells.delete(`${cell.row}:${cell.col}`);
   }
 
   return board;
 }
 
-// We have won the game if all unrevealed cells are bombs
-export function checkHasWon(board: BoardType): boolean {
-  return iterateOverBoard(board, (cell) => cell.state !== CellStates.REVEALED && !cell.bomb) == null;
-}
-
 // Reveal all bombs and highlight the one clicked
 export function setLosingBoard(losingCell: CellType | null, board: BoardType): BoardType {
-  return mapEachCell(board, (cell) => {
-    if (cell.bomb) {
+  const newBoard: BoardType = [];
+  for (const row of board) {
+    const newRow: CellType[] = [];
+    for (const cell of row) {
       if (cell === losingCell) {
-        return { ...cell, state: CellStates.BOMB_SELECTED };
+        newRow.push({ ...cell, state: CellStates.BOMB_SELECTED });
+      } else if (cell.bomb) {
+        newRow.push({ ...cell, state: CellStates.BOMB_REVEALED });
+      } else {
+        newRow.push(cell);
       }
-      return { ...cell, state: CellStates.BOMB_REVEALED };
     }
-    return cell;
-  });
+    newBoard.push(newRow);
+  }
+  return newBoard;
 }
 
 // This function is used on an `assumed` winning board to reveal all bumbs
@@ -196,4 +216,45 @@ export function countFlags(board: BoardType): number {
 
 export function getCellFromCords(row: number, col: number, board: BoardType): CellType | undefined {
   return board[row][col];
+}
+
+export function clamp(value: number, min: number, max: number): number {
+  value = Number.isNaN(value) ? 0 : value;
+  return Math.min(Math.max(value, min), max);
+}
+
+export function getMaximumCustomBombs(rows: number, columns: number): number {
+  rows = Number.isNaN(rows) ? 0 : rows;
+  columns = Number.isNaN(columns) ? 0 : columns;
+  return Math.max(Math.min(rows * columns - 1, MAX_CLASSIC_BOMBS), 0);
+}
+
+export function normalizeCustomGameConfig({ rows, columns, bombs }: GameConfig): GameConfig {
+  rows = clamp(rows, MIN_CUSTOM_ROWS, MAX_CUSTOM_ROWS);
+  columns = clamp(columns, MIN_CUSTOM_COLUMNS, MAX_CUSTOM_COLUMNS);
+  return {
+    rows,
+    columns,
+    bombs: clamp(bombs, MIN_CUSTOM_BOMBS, getMaximumCustomBombs(rows, columns)),
+  };
+}
+
+export function createResetGameState(config: GameConfig): GameState {
+  return { ...DEFAULT_STATE, ...config };
+}
+
+export function cleanNaN(value: number): string {
+  return Number.isNaN(value) ? '' : `${value}`;
+}
+
+export function isValueOutsideRange(value: number, min: number, max: number): boolean {
+  return Number.isNaN(value) || value < min || value > max;
+}
+
+export function cloneBoard(board: BoardType): BoardType {
+  const newBoard: BoardType = [];
+  for (const row of board) {
+    newBoard.push([...row]);
+  }
+  return newBoard;
 }

@@ -7,10 +7,10 @@ import {
   countFlags,
   setLosingBoard,
   revealClickedCell,
-  checkHasWon,
   setWinningBoard,
   getCellFromCords,
   populateBoardWithBombs,
+  cloneBoard,
 } from '@/Utils';
 
 let gameCounter = -1;
@@ -18,7 +18,16 @@ let gameCounter = -1;
 function gameInitialize(state: GameState = DEFAULT_STATE): GameState {
   const { rows, columns, bombs: bombsToFlag } = state;
   const board = getEmptyGrid(rows, columns);
-  return { ...state, board, bombsToFlag, id: `${++gameCounter}`, started: false, hasWon: false, gameOver: false };
+  return {
+    ...state,
+    board,
+    remainingCells: new Set(),
+    bombsToFlag,
+    id: `${++gameCounter}`,
+    started: false,
+    hasWon: false,
+    gameOver: false,
+  };
 }
 
 function reducer(state: GameState, action: Actions): GameState {
@@ -26,20 +35,22 @@ function reducer(state: GameState, action: Actions): GameState {
     case ActionTypes.RESET_GAME:
       return gameInitialize(action.state || state);
     case ActionTypes.REVEAL_CELL: {
-      let { board, gameOver, bombsToFlag, started, bombs } = state;
+      let { board, gameOver, bombsToFlag, started, bombs, remainingCells } = state;
       if (!started) {
-        board = populateBoardWithBombs(board, bombs, action.row, action.col);
+        board = populateBoardWithBombs(board, bombs, remainingCells, action.row, action.col);
       }
       const cell = getCellFromCords(action.row, action.col, board);
       if (cell == null) return state;
       let hasWon = false;
+      remainingCells.delete(`${cell.row}:${cell.col}`);
       if (cell.bomb) {
         board = setLosingBoard(cell, board);
         gameOver = true;
         bombsToFlag = 0;
       } else {
-        board = revealClickedCell(cell, board);
-        hasWon = checkHasWon(board);
+        board = cloneBoard(board);
+        board = revealClickedCell(cell, board, remainingCells);
+        hasWon = remainingCells.size === 0;
         if (hasWon) {
           gameOver = true;
           board = setWinningBoard(board);
@@ -49,6 +60,7 @@ function reducer(state: GameState, action: Actions): GameState {
       return {
         ...state,
         board,
+        remainingCells,
         hasWon,
         gameOver,
         bombsToFlag,
@@ -57,12 +69,13 @@ function reducer(state: GameState, action: Actions): GameState {
       };
     }
     case ActionTypes.TOGGLE_FLAG_CELL: {
-      const { board, bombs, started } = state;
+      let { board, bombs, started } = state;
       const cell = getCellFromCords(action.row, action.col, board);
       if (cell == null) return state;
       if (!started) {
         return state;
       }
+      board = cloneBoard(board);
       let _cell;
       if (cell.state === CellStates.HIDDEN) {
         _cell = { ...cell, state: CellStates.FLAGGED };

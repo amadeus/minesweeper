@@ -1,52 +1,62 @@
-import * as React from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { ActionTypes, DEFAULT_STATE, GameItems, HelpItems, MenuGroups, MenuItems } from '@/Constants';
-import type { Dispatch, MouseEventType } from '@/Types';
+import { AUTHOR_URL, GameItems, HelpItems, MenuGroups, MenuItems, SOURCE_CODE_URL } from '@/Constants';
+import type { GameConfig } from '@/Types';
+import type { MouseEventType } from '@/Types';
 import { MenuItem, MenuListItem } from '@/Window';
 
 const separators = new Set(['NEW']);
 
-function handleMenuListItemClick(group: string, item: string, dispatch: Dispatch) {
+interface MenuActionHandlers {
+  onNewGame: () => void;
+  onSelectPreset: (config: GameConfig) => void;
+  onOpenCustomDialog: () => void;
+}
+
+function handleMenuListItemClick(group: string, item: string, handlers: MenuActionHandlers) {
   if (group === MenuGroups.GAME) {
     switch (item) {
       case GameItems.NEW:
-        dispatch({ type: ActionTypes.RESET_GAME });
+        handlers.onNewGame();
         return;
       case GameItems.BEGINNER:
-        dispatch({
-          type: ActionTypes.RESET_GAME,
-          state: { ...DEFAULT_STATE, rows: 8, columns: 8, bombs: 10 },
-        });
+        handlers.onSelectPreset({ rows: 8, columns: 8, bombs: 10 });
         return;
       case GameItems.INTERMEDIATE:
-        dispatch({
-          type: ActionTypes.RESET_GAME,
-          state: { ...DEFAULT_STATE, rows: 16, columns: 16, bombs: 40 },
-        });
+        handlers.onSelectPreset({ rows: 16, columns: 16, bombs: 40 });
         return;
       case GameItems.EXPERT:
-        dispatch({
-          type: ActionTypes.RESET_GAME,
-          state: { ...DEFAULT_STATE, rows: 16, columns: 30, bombs: 99 },
-        });
+        handlers.onSelectPreset({ rows: 16, columns: 30, bombs: 99 });
+        return;
+      case GameItems.CUSTOM:
+        handlers.onOpenCustomDialog();
+        return;
+      default:
+        return;
+    }
+  } else if (group === MenuGroups.HELP) {
+    switch (item) {
+      case HelpItems.AUTHOR:
+        window.open(AUTHOR_URL, '_blank', 'noopener,noreferrer');
+        return;
+      case HelpItems.SOURCE_CODE:
+        window.open(SOURCE_CODE_URL, '_blank', 'noopener,noreferrer');
         return;
       default:
         console.log('not yet implemented');
         return;
     }
-  } else if (group === MenuGroups.HELP) {
-    console.log('not yet implemented');
   }
 }
 
-function renderMenu(id: MenuGroups, dispatch: Dispatch): React.ReactNode {
+function renderMenu(id: MenuGroups, handlers: MenuActionHandlers): React.ReactNode {
   const items = MenuItems[id];
   if (items != null) {
     return items.map((item: GameItems | HelpItems) => (
       <MenuListItem
         key={`${id}-${item}`}
         separator={separators.has(item)}
-        onClick={() => handleMenuListItemClick(id, item, dispatch)}>
+        onClick={() => handleMenuListItemClick(id, item, handlers)}>
         {item.toLowerCase()}
       </MenuListItem>
     ));
@@ -65,12 +75,19 @@ function getMenuGroupFromString(id: string): MenuGroups {
 }
 
 interface MenusProps {
-  dispatch: Dispatch;
+  onNewGame: () => void;
+  onSelectPreset: (config: GameConfig) => void;
+  onOpenCustomDialog: () => void;
 }
 
-export default function Menus({ dispatch }: MenusProps) {
-  const [selectedMenu, setSelectedMenu] = React.useState<string | null>(null);
-  React.useEffect(() => {
+export default function Menus({ onNewGame, onSelectPreset, onOpenCustomDialog }: MenusProps) {
+  const [selectedMenu, setSelectedMenu] = useState<string | null>(null);
+  const handlers = useMemo<MenuActionHandlers>(
+    () => ({ onNewGame, onSelectPreset, onOpenCustomDialog }),
+    [onNewGame, onSelectPreset, onOpenCustomDialog]
+  );
+
+  useEffect(() => {
     const handleOuterClick = () => {
       if (selectedMenu != null) {
         setSelectedMenu(null);
@@ -95,7 +112,7 @@ export default function Menus({ dispatch }: MenusProps) {
               setSelectedMenu(id);
             }
           }}
-          renderMenuList={(id) => renderMenu(id, dispatch)}>
+          renderMenuList={(id) => renderMenu(id, handlers)}>
           {name.toLowerCase()}
         </MenuItem>
       ))}
