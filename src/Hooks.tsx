@@ -10,6 +10,7 @@ import {
   checkHasWon,
   setWinningBoard,
   getCellFromCords,
+  populateBoardWithBombs,
 } from '@/Utils';
 
 let gameCounter = -1;
@@ -25,7 +26,10 @@ function reducer(state: GameState, action: Actions): GameState {
     case ActionTypes.RESET_GAME:
       return gameInitialize(action.state || state);
     case ActionTypes.REVEAL_CELL: {
-      let { board, gameOver, bombsToFlag } = state;
+      let { board, gameOver, bombsToFlag, started, bombs } = state;
+      if (!started) {
+        board = populateBoardWithBombs(board, bombs, action.row, action.col);
+      }
       const cell = getCellFromCords(action.row, action.col, board);
       if (cell == null) return state;
       let hasWon = false;
