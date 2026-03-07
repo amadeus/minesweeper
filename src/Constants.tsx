@@ -51,13 +51,17 @@ export enum GameItems {
 }
 
 export enum HelpItems {
-  NOPE = 'NOPE',
+  AUTHOR = 'By Amadeus',
+  SOURCE_CODE = 'Source Code',
 }
 
 export const MenuItems = Object.freeze({
   [MenuGroups.GAME]: [GameItems.NEW, GameItems.BEGINNER, GameItems.INTERMEDIATE, GameItems.EXPERT, GameItems.CUSTOM],
-  [MenuGroups.HELP]: [HelpItems.NOPE],
+  [MenuGroups.HELP]: [HelpItems.AUTHOR, HelpItems.SOURCE_CODE],
 });
+
+export const AUTHOR_URL = 'https://twitter.com/amadeus';
+export const SOURCE_CODE_URL = 'https://github.com/amadeus/minesweeper';
 
 export const MIN_CUSTOM_COLUMNS = 8;
 export const MAX_CUSTOM_COLUMNS = 50;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { GameItems, HelpItems, MenuGroups, MenuItems } from '@/Constants';
+import { AUTHOR_URL, GameItems, HelpItems, MenuGroups, MenuItems, SOURCE_CODE_URL } from '@/Constants';
 import type { GameConfig } from '@/Types';
 import type { MouseEventType } from '@/Types';
 import { MenuItem, MenuListItem } from '@/Window';
@@ -35,7 +35,17 @@ function handleMenuListItemClick(group: string, item: string, handlers: MenuActi
         return;
     }
   } else if (group === MenuGroups.HELP) {
-    console.log('not yet implemented');
+    switch (item) {
+      case HelpItems.AUTHOR:
+        window.open(AUTHOR_URL, '_blank', 'noopener,noreferrer');
+        return;
+      case HelpItems.SOURCE_CODE:
+        window.open(SOURCE_CODE_URL, '_blank', 'noopener,noreferrer');
+        return;
+      default:
+        console.log('not yet implemented');
+        return;
+    }
   }
 }
 
