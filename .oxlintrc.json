@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["typescript", "react"],
+  "plugins": ["import", "typescript", "react"],
   "env": {
     "browser": true
   },
@@ -11,6 +11,7 @@
   },
   "ignorePatterns": ["node_modules/", "dist/"],
   "rules": {
+    "no-restricted-imports": ["error", { "patterns": ["./*", "../*"] }],
     "react/react-in-jsx-scope": "off",
     "react-hooks/exhaustive-deps": "error"
   }

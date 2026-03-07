@@ -1,4 +1,7 @@
-import {useReducer} from 'react';
+import { useReducer } from 'react';
+
+import { ActionTypes, CellStates, DEFAULT_STATE } from '@/Constants';
+import type { Actions, CellType, Dispatch, GameState } from '@/Types';
 import {
   getEmptyGrid,
   precomputeSurroundingBombs,
@@ -10,15 +13,13 @@ import {
   getCellFromCords,
   iterateOverBoard,
   getRandomInt,
-} from './Utils';
-import {CellStates, DEFAULT_STATE, ActionTypes} from './Constants';
-import type {GameState, Actions, Dispatch, CellType} from './Types';
+} from '@/Utils';
 
 let gameCounter = -1;
 
 function gameInitialize(state: GameState = DEFAULT_STATE): GameState {
-  const {rows, columns, bombs: bombsToFlag} = state;
-  let {bombs} = state;
+  const { rows, columns, bombs: bombsToFlag } = state;
+  let { bombs } = state;
   let board = getEmptyGrid(rows, columns);
   const sampleCells: CellType[] = [];
   iterateOverBoard(board, (cell, row, col) => {
@@ -45,7 +46,7 @@ function gameInitialize(state: GameState = DEFAULT_STATE): GameState {
     bombs--;
   }
   board = precomputeSurroundingBombs(board);
-  return {...state, board, bombsToFlag, id: `${++gameCounter}`, started: false, hasWon: false, gameOver: false};
+  return { ...state, board, bombsToFlag, id: `${++gameCounter}`, started: false, hasWon: false, gameOver: false };
 }
 
 function reducer(state: GameState, action: Actions): GameState {
@@ -53,7 +54,7 @@ function reducer(state: GameState, action: Actions): GameState {
     case ActionTypes.RESET_GAME:
       return gameInitialize(action.state || state);
     case ActionTypes.REVEAL_CELL: {
-      let {board, gameOver, bombsToFlag} = state;
+      let { board, gameOver, bombsToFlag } = state;
       const cell = getCellFromCords(action.row, action.col, board);
       if (cell == null) return state;
       let hasWon = false;
@@ -70,10 +71,18 @@ function reducer(state: GameState, action: Actions): GameState {
           bombsToFlag = 0;
         }
       }
-      return {...state, board, hasWon, gameOver, bombsToFlag, started: true, mouseDown: false};
+      return {
+        ...state,
+        board,
+        hasWon,
+        gameOver,
+        bombsToFlag,
+        started: true,
+        mouseDown: false,
+      };
     }
     case ActionTypes.TOGGLE_FLAG_CELL: {
-      const {board, bombs, started} = state;
+      const { board, bombs, started } = state;
       const cell = getCellFromCords(action.row, action.col, board);
       if (cell == null) return state;
       if (!started) {
@@ -81,26 +90,26 @@ function reducer(state: GameState, action: Actions): GameState {
       }
       let _cell;
       if (cell.state === CellStates.HIDDEN) {
-        _cell = {...cell, state: CellStates.FLAGGED};
+        _cell = { ...cell, state: CellStates.FLAGGED };
       } else if (cell.state === CellStates.FLAGGED) {
-        _cell = {...cell, state: CellStates.FLAGGED_MAYBE};
+        _cell = { ...cell, state: CellStates.FLAGGED_MAYBE };
       } else {
-        _cell = {...cell, state: CellStates.HIDDEN};
+        _cell = { ...cell, state: CellStates.HIDDEN };
       }
       board[_cell.row][_cell.col] = _cell;
       const bombsFlagged = countFlags(board);
-      return {...state, board, bombsToFlag: bombs - bombsFlagged};
+      return { ...state, board, bombsToFlag: bombs - bombsFlagged };
     }
     case ActionTypes.SET_GAME_OVER: {
-      let {board} = state;
+      let { board } = state;
       board = setLosingBoard(null, board);
-      return {...state, board, gameOver: true, hasWon: false};
+      return { ...state, board, gameOver: true, hasWon: false };
     }
     case ActionTypes.MOUSE_DOWN: {
-      return {...state, mouseDown: true};
+      return { ...state, mouseDown: true };
     }
     case ActionTypes.MOUSE_UP: {
-      return {...state, mouseDown: false};
+      return { ...state, mouseDown: false };
     }
     default:
       return state;
@@ -114,5 +123,5 @@ interface MinesweeperState {
 
 export function useMinesweeperState(initialState: GameState = DEFAULT_STATE): MinesweeperState {
   const [state, dispatch] = useReducer(reducer, initialState, gameInitialize);
-  return {state, dispatch};
+  return { state, dispatch };
 }

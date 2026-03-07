@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "es2020",
     "lib": ["dom", "dom.iterable", "es2020"],
     "allowJs": false,
@@ -12,7 +13,11 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
+    "noUncheckedSideEffectImports": true,
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",

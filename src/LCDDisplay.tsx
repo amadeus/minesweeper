@@ -1,6 +1,7 @@
 import classNames from 'classnames';
-import sharedStyles from './Shared.module.css';
-import styles from './LCDDisplay.module.css';
+
+import styles from '@/LCDDisplay.module.css';
+import sharedStyles from '@/Shared.module.css';
 
 function getValueClass(value: string): string | undefined {
   switch (value) {
@@ -36,7 +37,7 @@ interface LCDDisplayProps {
   digits?: number | undefined;
 }
 
-export default function LCDDisplay({value, digits = 3}: LCDDisplayProps) {
+export default function LCDDisplay({ value, digits = 3 }: LCDDisplayProps) {
   return (
     <div className={classNames(styles.container, sharedStyles.inset)}>
       {String(value)
