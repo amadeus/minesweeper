@@ -1,6 +1,13 @@
 .window {
+  position: relative;
   border: 1px solid #000;
   background-color: #c3c3c3;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
 }
 
 .titleBar {

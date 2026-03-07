@@ -92,15 +92,17 @@ function TitleBar({ children }: TitleBarProps) {
 interface WindowProps {
   title: React.ReactNode;
   renderMenuItems?: () => React.ReactNode;
+  overlay?: React.ReactNode;
   children: React.ReactNode;
 }
 
-export default function Window({ children, title, renderMenuItems }: WindowProps) {
+export default function Window({ children, title, renderMenuItems, overlay }: WindowProps) {
   return (
     <div className={styles.window}>
       <TitleBar>{title}</TitleBar>
       {renderMenuItems != null ? <MenuBar>{renderMenuItems()}</MenuBar> : null}
       {children}
+      {overlay != null ? <div className={styles.overlay}>{overlay}</div> : null}
     </div>
   );
 }

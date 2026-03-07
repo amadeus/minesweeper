@@ -113,17 +113,19 @@ export default function Minesweeper() {
           onSelectPreset={handleSelectPreset}
           onOpenCustomDialog={handleOpenCustomDialog}
         />
-      )}>
+      )}
+      overlay={
+        <CustomGameDialog
+          isOpen={isCustomDialogOpen}
+          initialConfig={customGameConfig}
+          onClose={handleCloseCustomDialog}
+          onSubmit={handleSubmitCustomDialog}
+        />
+      }>
       <div className={sharedStyles.outset}>
         <GameStatus state={state} dispatch={dispatch} />
         <GameBoard state={state} dispatch={dispatch} />
       </div>
-      <CustomGameDialog
-        isOpen={isCustomDialogOpen}
-        initialConfig={customGameConfig}
-        onClose={handleCloseCustomDialog}
-        onSubmit={handleSubmitCustomDialog}
-      />
     </Window>
   );
 }
