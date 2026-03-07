@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import * as React from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 import {
   MAX_CUSTOM_COLUMNS,
@@ -22,14 +22,9 @@ interface CustomGameDialogProps {
   onSubmit(config: GameConfig): void;
 }
 
-export default React.memo(function CustomGameDialog({
-  anchorRect,
-  initialConfig,
-  onClose,
-  onSubmit,
-}: CustomGameDialogProps) {
-  const [values, setValues] = React.useState<GameConfig>(() => ({ ...initialConfig }));
-  const windowRef = React.useRef<HTMLDivElement>(null);
+export default function CustomGameDialog({ anchorRect, initialConfig, onClose, onSubmit }: CustomGameDialogProps) {
+  const [values, setValues] = useState<GameConfig>(() => ({ ...initialConfig }));
+  const windowRef = useRef<HTMLDivElement>(null);
 
   const bombMax = getMaximumCustomBombs(
     clamp(values.rows, MIN_CUSTOM_ROWS, MAX_CUSTOM_ROWS),
@@ -39,14 +34,14 @@ export default React.memo(function CustomGameDialog({
   const isRowsInvalid = isValueOutsideRange(values.rows, MIN_CUSTOM_ROWS, MAX_CUSTOM_ROWS);
   const isBombsInvalid = isValueOutsideRange(values.bombs, MIN_CUSTOM_BOMBS, bombMax);
   const hasInvalidValues = isColumnsInvalid || isRowsInvalid || isBombsInvalid;
-  const handleChange = React.useCallback(
+  const handleChange = useCallback(
     (key: keyof GameConfig) => (event: React.ChangeEvent<HTMLInputElement>) => {
       setValues((currentValues) => ({ ...currentValues, [key]: Number.parseInt(event.target.value, 10) }));
     },
     []
   );
 
-  const handleSubmit = React.useCallback(
+  const handleSubmit = useCallback(
     (event: React.SyntheticEvent<HTMLFormElement>) => {
       event.preventDefault();
       if (!hasInvalidValues) {
@@ -56,7 +51,7 @@ export default React.memo(function CustomGameDialog({
     [onSubmit, values, hasInvalidValues]
   );
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     const windowElement = windowRef.current;
     if (windowElement == null || anchorRect == null) {
       return;
@@ -146,4 +141,4 @@ export default React.memo(function CustomGameDialog({
       </Window>
     </div>
   );
-});
+}

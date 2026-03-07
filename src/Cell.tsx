@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import * as React from 'react';
+import { useState } from 'react';
 
 import { ActionTypes, CellStates } from '@/Constants';
 import type { CellType, Dispatch, MouseEventType } from '@/Types';
@@ -132,7 +132,7 @@ interface CellProps {
 }
 
 export default function Cell({ cell, dispatch }: CellProps) {
-  const [mouseState, setMouseState] = React.useState<MouseState>(MouseState.UP);
+  const [mouseState, setMouseState] = useState<MouseState>(MouseState.UP);
   return (
     <div
       className={classNames(styles.container, getStateClass(cell), {

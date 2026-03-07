@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { memo, useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 import Board from '@/Board';
 import Cell from '@/Cell';
@@ -16,8 +16,6 @@ import Window from '@/Window';
 
 import styles from '@/Minesweeper.module.css';
 import sharedStyles from '@/Shared.module.css';
-
-const MemoizedCell = memo(Cell);
 
 interface GameStatusProps {
   state: GameState;
@@ -52,13 +50,16 @@ interface GameBoardProps {
 
 function GameBoard({ state, dispatch }: GameBoardProps) {
   const { board, rows, columns, gameOver } = state;
-  const cells: React.ReactNode[] = [];
-  iterateOverBoard(board, (cell) => {
-    cells.push(<MemoizedCell key={`${cell.row}x${cell.col}`} cell={cell} dispatch={dispatch} />);
-  });
+  function computeCells() {
+    const cells: React.ReactNode[] = [];
+    iterateOverBoard(board, (cell) => {
+      cells.push(<Cell key={`${cell.row}x${cell.col}`} cell={cell} dispatch={dispatch} />);
+    });
+    return cells;
+  }
   return (
     <Board rows={rows} columns={columns} disable={gameOver}>
-      {cells}
+      {computeCells()}
     </Board>
   );
 }

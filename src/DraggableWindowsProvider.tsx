@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 
 import styles from '@/DraggableWindowsProvider.module.css';
 
@@ -18,7 +18,7 @@ interface DragSession {
 }
 
 export default function DraggableWindowsProvider({ children }: DraggableWindowsProviderProps) {
-  React.useEffect(() => {
+  useEffect(() => {
     let activeDrag: DragSession | undefined;
 
     function handlePointerMove(event: PointerEvent) {

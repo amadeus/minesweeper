@@ -21,6 +21,7 @@ export type BoardType = CellType[][];
 export interface GameState {
   id: string;
   board: BoardType;
+  remainingCells: Set<string>;
   gameOver: boolean;
   hasWon: boolean;
   rows: number;

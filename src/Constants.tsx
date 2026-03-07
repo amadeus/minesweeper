@@ -18,6 +18,7 @@ export const CELL_SIZE = 16;
 export const DEFAULT_STATE: GameState = Object.freeze({
   id: '',
   board: [],
+  remainingCells: new Set<string>(),
   gameOver: false,
   hasWon: false,
   rows: 16,

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import * as React from 'react';
+import { forwardRef } from 'react';
 
 import type { MenuGroups } from '@/Constants';
 import type { MouseEventType } from '@/Types';
@@ -111,7 +111,7 @@ interface WindowProps {
   onMinimizeClick?(): void;
 }
 
-const Window = React.forwardRef<HTMLDivElement, WindowProps>(function Window(
+const Window = forwardRef<HTMLDivElement, WindowProps>(function Window(
   { children, className, title, renderMenuItems, overlay, draggable = true, onMinimizeClick },
   ref
 ) {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { AUTHOR_URL, GameItems, HelpItems, MenuGroups, MenuItems, SOURCE_CODE_URL } from '@/Constants';
 import type { GameConfig } from '@/Types';
@@ -81,13 +81,13 @@ interface MenusProps {
 }
 
 export default function Menus({ onNewGame, onSelectPreset, onOpenCustomDialog }: MenusProps) {
-  const [selectedMenu, setSelectedMenu] = React.useState<string | null>(null);
-  const handlers = React.useMemo<MenuActionHandlers>(
+  const [selectedMenu, setSelectedMenu] = useState<string | null>(null);
+  const handlers = useMemo<MenuActionHandlers>(
     () => ({ onNewGame, onSelectPreset, onOpenCustomDialog }),
     [onNewGame, onSelectPreset, onOpenCustomDialog]
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleOuterClick = () => {
       if (selectedMenu != null) {
         setSelectedMenu(null);
