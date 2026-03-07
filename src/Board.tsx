@@ -1,7 +1,9 @@
 import classNames from 'classnames';
-import {CELL_SIZE} from './Constants';
-import sharedStyles from './Shared.module.css';
-import styles from './Board.module.css';
+
+import { CELL_SIZE } from '@/Constants';
+
+import styles from '@/Board.module.css';
+import sharedStyles from '@/Shared.module.css';
 
 interface BoardProps {
   rows: number;
@@ -10,9 +12,9 @@ interface BoardProps {
   children: React.ReactNode;
 }
 
-export default function Board({rows, columns, children, disable = false}: BoardProps) {
+export default function Board({ rows, columns, children, disable = false }: BoardProps) {
   return (
-    <div className={classNames(sharedStyles.inset, {[styles.disable]: disable})}>
+    <div className={classNames(sharedStyles.inset, { [styles.disable]: disable })}>
       <div
         className={styles.grid}
         style={{

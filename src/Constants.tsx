@@ -1,4 +1,4 @@
-import type {GameState} from './Types';
+import type { GameState } from '@/Types';
 
 export enum CellStates {
   HIDDEN,

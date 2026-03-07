@@ -1,5 +1,6 @@
 import classNames from 'classnames';
-import styles from './FaceButton.module.css';
+
+import styles from '@/FaceButton.module.css';
 
 export enum FaceTypes {
   SMILE,
@@ -27,6 +28,6 @@ interface FaceButtonProps {
   onClick: () => void;
 }
 
-export default function FaceButton({type, onClick}: FaceButtonProps) {
+export default function FaceButton({ type, onClick }: FaceButtonProps) {
   return <div className={classNames(styles.container, getClass(type))} onClick={onClick} />;
 }

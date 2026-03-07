@@ -1,5 +1,6 @@
-import type {MouseEvent} from 'react';
-import type {CellStates, ActionTypes} from './Constants';
+import type { MouseEvent } from 'react';
+
+import type { ActionTypes, CellStates } from '@/Constants';
 
 export interface CellType {
   row: number;

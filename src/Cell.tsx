@@ -1,8 +1,10 @@
-import * as React from 'react';
 import classNames from 'classnames';
-import {CellStates, ActionTypes} from './Constants';
-import styles from './Cell.module.css';
-import type {CellType, MouseEventType, Dispatch} from './Types';
+import * as React from 'react';
+
+import { ActionTypes, CellStates } from '@/Constants';
+import type { CellType, Dispatch, MouseEventType } from '@/Types';
+
+import styles from '@/Cell.module.css';
 
 function getStateClass(cell: CellType): string | undefined {
   switch (cell.state) {
@@ -92,10 +94,10 @@ function preventDefault(event: React.MouseEvent<HTMLElement>) {
   event.preventDefault();
 }
 
-function handleMouseDown({button}: MouseEventType, setMouseState: MouseStateSetter, dispatch: Dispatch) {
+function handleMouseDown({ button }: MouseEventType, setMouseState: MouseStateSetter, dispatch: Dispatch) {
   switch (button) {
     case 0: // primary
-      dispatch({type: ActionTypes.MOUSE_DOWN});
+      dispatch({ type: ActionTypes.MOUSE_DOWN });
       setMouseState(MouseState.PRIMARY);
       break;
     case 2: // secondary
@@ -106,16 +108,16 @@ function handleMouseDown({button}: MouseEventType, setMouseState: MouseStateSett
 
 function handleMouseUp(event: MouseEventType, setMouseState: MouseStateSetter, cell: CellType, dispatch: Dispatch) {
   event.preventDefault();
-  const {row, col} = cell;
+  const { row, col } = cell;
   switch (event.button) {
     case 0: // primary
       if (cell.state === CellStates.HIDDEN) {
-        dispatch({type: ActionTypes.REVEAL_CELL, col, row});
+        dispatch({ type: ActionTypes.REVEAL_CELL, col, row });
       }
       break;
     case 2: // secondary
       if (isFlaggable(cell)) {
-        dispatch({type: ActionTypes.TOGGLE_FLAG_CELL, col, row});
+        dispatch({ type: ActionTypes.TOGGLE_FLAG_CELL, col, row });
       }
       break;
     default:
@@ -129,7 +131,7 @@ interface CellProps {
   dispatch: Dispatch;
 }
 
-export default function Cell({cell, dispatch}: CellProps) {
+export default function Cell({ cell, dispatch }: CellProps) {
   const [mouseState, setMouseState] = React.useState<MouseState>(MouseState.UP);
   return (
     <div
@@ -142,7 +144,7 @@ export default function Cell({cell, dispatch}: CellProps) {
       onMouseLeave={
         isMouseDown(mouseState)
           ? () => {
-              dispatch({type: ActionTypes.MOUSE_UP});
+              dispatch({ type: ActionTypes.MOUSE_UP });
               setMouseState(MouseState.UP);
             }
           : undefined
