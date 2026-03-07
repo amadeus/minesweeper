@@ -69,9 +69,3 @@ bun run preview
 - Linting uses `oxlint`
 - Formatting uses `oxfmt`
 - Source imports use the `@/` alias for files in `src/`
-
-## Todo
-
-- Custom Game configuration
-- Improve mobile support? Maybe?
-- Bugs? Probably
