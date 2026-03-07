@@ -51,8 +51,8 @@ export enum GameItems {
 }
 
 export enum HelpItems {
-  AUTHOR = 'By Amadeus',
-  SOURCE_CODE = 'Source Code',
+  AUTHOR = 'By amadeus',
+  SOURCE_CODE = 'Source code',
 }
 
 export const MenuItems = Object.freeze({

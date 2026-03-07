@@ -5,6 +5,8 @@ interface DraggableWindowsProviderProps {
 }
 
 interface DragSession {
+  currentOffsetX: number;
+  currentOffsetY: number;
   element: HTMLElement;
   pointerId: number;
   startClientX: number;
@@ -22,6 +24,8 @@ export default function DraggableWindowsProvider({ children }: DraggableWindowsP
       }
       const nextX = activeDrag.startOffsetX + event.clientX - activeDrag.startClientX;
       const nextY = activeDrag.startOffsetY + event.clientY - activeDrag.startClientY;
+      activeDrag.currentOffsetX = nextX;
+      activeDrag.currentOffsetY = nextY;
       activeDrag.element.style.setProperty('--drag-x', `${nextX}px`);
       activeDrag.element.style.setProperty('--drag-y', `${nextY}px`);
     }
@@ -30,6 +34,8 @@ export default function DraggableWindowsProvider({ children }: DraggableWindowsP
       if (activeDrag == null || activeDrag.pointerId !== event.pointerId) {
         return;
       }
+      activeDrag.element.style.setProperty('--drag-x', `${roundToDevicePixel(activeDrag.currentOffsetX)}px`);
+      activeDrag.element.style.setProperty('--drag-y', `${roundToDevicePixel(activeDrag.currentOffsetY)}px`);
       activeDrag.element.removeAttribute('data-dragging');
       activeDrag = undefined;
       document.removeEventListener('pointermove', handlePointerMove);
@@ -48,13 +54,17 @@ export default function DraggableWindowsProvider({ children }: DraggableWindowsP
         return;
       }
 
+      const startOffsetX = getOffset(draggableWindow, '--drag-x');
+      const startOffsetY = getOffset(draggableWindow, '--drag-y');
       activeDrag = {
+        currentOffsetX: startOffsetX,
+        currentOffsetY: startOffsetY,
         element: draggableWindow,
         pointerId: event.pointerId,
         startClientX: event.clientX,
         startClientY: event.clientY,
-        startOffsetX: getOffset(draggableWindow, '--drag-x'),
-        startOffsetY: getOffset(draggableWindow, '--drag-y'),
+        startOffsetX,
+        startOffsetY,
       };
 
       event.preventDefault();
@@ -81,6 +91,12 @@ export default function DraggableWindowsProvider({ children }: DraggableWindowsP
   }, []);
 
   return <>{children}</>;
+}
+
+function roundToDevicePixel(value: number) {
+  const devicePixelRatio = window.devicePixelRatio ?? 1;
+  const step = 1 / devicePixelRatio;
+  return Math.round(value / step) * step;
 }
 
 function getOffset(element: HTMLElement, variableName: '--drag-x' | '--drag-y') {
