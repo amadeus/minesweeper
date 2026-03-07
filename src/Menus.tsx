@@ -1,20 +1,15 @@
 import * as React from 'react';
 
 import { GameItems, HelpItems, MenuGroups, MenuItems } from '@/Constants';
+import type { GameConfig } from '@/GameSettings';
 import type { MouseEventType } from '@/Types';
 import { MenuItem, MenuListItem } from '@/Window';
 
 const separators = new Set(['NEW']);
 
-interface PresetConfig {
-  rows: number;
-  columns: number;
-  bombs: number;
-}
-
 interface MenuActionHandlers {
   onNewGame: () => void;
-  onSelectPreset: (config: PresetConfig) => void;
+  onSelectPreset: (config: GameConfig) => void;
   onOpenCustomDialog: () => void;
 }
 
@@ -71,7 +66,7 @@ function getMenuGroupFromString(id: string): MenuGroups {
 
 interface MenusProps {
   onNewGame: () => void;
-  onSelectPreset: (config: PresetConfig) => void;
+  onSelectPreset: (config: GameConfig) => void;
   onOpenCustomDialog: () => void;
 }
 
@@ -79,7 +74,7 @@ export default function Menus({ onNewGame, onSelectPreset, onOpenCustomDialog }:
   const [selectedMenu, setSelectedMenu] = React.useState<string | null>(null);
   const handlers = React.useMemo<MenuActionHandlers>(
     () => ({ onNewGame, onSelectPreset, onOpenCustomDialog }),
-    [onNewGame, onSelectPreset, onOpenCustomDialog],
+    [onNewGame, onSelectPreset, onOpenCustomDialog]
   );
 
   React.useEffect(() => {

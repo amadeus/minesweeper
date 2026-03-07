@@ -3,8 +3,11 @@ import React, { memo } from 'react';
 
 import Board from '@/Board';
 import Cell from '@/Cell';
+import CustomGameDialog from '@/CustomGameDialog';
 import { ActionTypes, DEFAULT_STATE } from '@/Constants';
 import FaceButton, { FaceTypes } from '@/FaceButton';
+import { createResetGameState, normalizeCustomGameConfig } from '@/GameSettings';
+import type { GameConfig } from '@/GameSettings';
 import { useMinesweeperState } from '@/Hooks';
 import LCDDisplay from '@/LCDDisplay';
 import Menus from '@/Menus';
@@ -17,12 +20,6 @@ import styles from '@/Minesweeper.module.css';
 import sharedStyles from '@/Shared.module.css';
 
 const MemoizedCell = memo(Cell);
-
-interface PresetConfig {
-  rows: number;
-  columns: number;
-  bombs: number;
-}
 
 interface GameStatusProps {
   state: GameState;
@@ -70,22 +67,42 @@ function GameBoard({ state, dispatch }: GameBoardProps) {
 
 export default function Minesweeper() {
   const { state, dispatch } = useMinesweeperState();
-  const [, setIsCustomDialogOpen] = React.useState(false);
+  const [isCustomDialogOpen, setIsCustomDialogOpen] = React.useState(false);
+  const [customGameConfig, setCustomGameConfig] = React.useState<GameConfig>({
+    rows: DEFAULT_STATE.rows,
+    columns: DEFAULT_STATE.columns,
+    bombs: DEFAULT_STATE.bombs,
+  });
 
   const handleNewGame = React.useCallback(() => {
     dispatch({ type: ActionTypes.RESET_GAME });
   }, [dispatch]);
 
   const handleSelectPreset = React.useCallback(
-    ({ rows, columns, bombs }: PresetConfig) => {
-      dispatch({ type: ActionTypes.RESET_GAME, state: { ...DEFAULT_STATE, rows, columns, bombs } });
+    (config: GameConfig) => {
+      dispatch({ type: ActionTypes.RESET_GAME, state: createResetGameState(config) });
     },
     [dispatch],
   );
 
   const handleOpenCustomDialog = React.useCallback(() => {
+    setCustomGameConfig({ rows: state.rows, columns: state.columns, bombs: state.bombs });
     setIsCustomDialogOpen(true);
+  }, [state.bombs, state.columns, state.rows]);
+
+  const handleCloseCustomDialog = React.useCallback(() => {
+    setIsCustomDialogOpen(false);
   }, []);
+
+  const handleSubmitCustomDialog = React.useCallback(
+    (config: GameConfig) => {
+      const normalizedConfig = normalizeCustomGameConfig(config);
+      setCustomGameConfig(normalizedConfig);
+      setIsCustomDialogOpen(false);
+      dispatch({ type: ActionTypes.RESET_GAME, state: createResetGameState(normalizedConfig) });
+    },
+    [dispatch],
+  );
 
   return (
     <Window
@@ -101,6 +118,12 @@ export default function Minesweeper() {
         <GameStatus state={state} dispatch={dispatch} />
         <GameBoard state={state} dispatch={dispatch} />
       </div>
+      <CustomGameDialog
+        isOpen={isCustomDialogOpen}
+        initialConfig={customGameConfig}
+        onClose={handleCloseCustomDialog}
+        onSubmit={handleSubmitCustomDialog}
+      />
     </Window>
   );
 }
