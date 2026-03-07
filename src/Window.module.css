@@ -55,6 +55,17 @@
   cursor: default;
 }
 
+.buttonInteractive {
+  cursor: pointer;
+}
+
+.buttonInteractive:active .minimizeIcon {
+  border-top: 2px solid #818181;
+  border-left: 2px solid #818181;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+}
+
 .lineIcon {
   margin-top: -1px;
   margin-left: -1px;

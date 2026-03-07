@@ -85,7 +85,7 @@ export default React.memo(function CustomGameDialog({
   return (
     <div className={styles.root}>
       <div className={styles.backdrop} onClick={onClose} />
-      <Window ref={windowRef} className={styles.window} title="Custom Field">
+      <Window ref={windowRef} className={styles.window} title="Custom Field" onMinimizeClick={onClose}>
         <form className={styles.form} noValidate onSubmit={handleSubmit}>
           <div className={styles.fields}>
             <label className={styles.label} htmlFor="custom-columns">

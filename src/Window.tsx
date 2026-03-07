@@ -17,11 +17,17 @@ function MinimizeIcon() {
 interface TitleBarButtonProps {
   children: React.ReactNode;
   className?: string;
+  onClick?(): void;
 }
 
-function TitleBarButton({ children, className }: TitleBarButtonProps) {
+function TitleBarButton({ children, className, onClick }: TitleBarButtonProps) {
   return (
-    <div className={classNames(styles.button, styles.nonDraggable, className)} data-no-drag>
+    <div
+      className={classNames(styles.button, styles.nonDraggable, className, {
+        [styles.buttonInteractive]: onClick != null,
+      })}
+      data-no-drag
+      onClick={onClick}>
       {children}
     </div>
   );
@@ -78,16 +84,17 @@ export function MenuListItem({ children, separator = false, onClick }: MenuListI
 
 interface TitleBarProps {
   children: React.ReactNode;
+  onMinimizeClick?(): void;
 }
 
-function TitleBar({ children }: TitleBarProps) {
+function TitleBar({ children, onMinimizeClick }: TitleBarProps) {
   return (
     <div className={styles.titleBar} data-drag-handle>
       <TitleBarButton>
         <LineIcon />
       </TitleBarButton>
       <div className={styles.title}>{children}</div>
-      <TitleBarButton>
+      <TitleBarButton onClick={onMinimizeClick}>
         <MinimizeIcon />
       </TitleBarButton>
     </div>
@@ -97,19 +104,20 @@ function TitleBar({ children }: TitleBarProps) {
 interface WindowProps {
   className?: string;
   title: React.ReactNode;
-  renderMenuItems?: () => React.ReactNode;
+  renderMenuItems?(): React.ReactNode;
   overlay?: React.ReactNode;
   children: React.ReactNode;
   draggable?: boolean;
+  onMinimizeClick?(): void;
 }
 
 const Window = React.forwardRef<HTMLDivElement, WindowProps>(function Window(
-  { children, className, title, renderMenuItems, overlay, draggable = true },
+  { children, className, title, renderMenuItems, overlay, draggable = true, onMinimizeClick },
   ref
 ) {
   return (
     <div ref={ref} className={classNames(styles.window, className)} {...(draggable ? { 'data-draggable': '' } : {})}>
-      <TitleBar>{title}</TitleBar>
+      <TitleBar onMinimizeClick={onMinimizeClick}>{title}</TitleBar>
       {renderMenuItems != null ? <MenuBar>{renderMenuItems()}</MenuBar> : null}
       {children}
       {overlay != null ? <div className={styles.overlay}>{overlay}</div> : null}
