@@ -87,7 +87,7 @@
 .menuList {
   position: absolute;
   top: 18px;
-  left: 0;
+  left: -1px;
   width: 142px;
   border: 1px solid #000;
   background-color: #c3c3c3;
@@ -100,6 +100,10 @@
 .menuListItem:hover {
   background-color: #000082;
   color: #fff;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+  margin-left: -1px;
+  margin-right: -1px;
 }
 
 .menuItem:first-letter,
