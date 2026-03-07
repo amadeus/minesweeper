@@ -58,3 +58,10 @@ export const MenuItems = Object.freeze({
   [MenuGroups.GAME]: [GameItems.NEW, GameItems.BEGINNER, GameItems.INTERMEDIATE, GameItems.EXPERT, GameItems.CUSTOM],
   [MenuGroups.HELP]: [HelpItems.NOPE],
 });
+
+export const MIN_CUSTOM_COLUMNS = 8;
+export const MAX_CUSTOM_COLUMNS = 50;
+export const MIN_CUSTOM_ROWS = 8;
+export const MAX_CUSTOM_ROWS = 50;
+export const MIN_CUSTOM_BOMBS = 10;
+export const MAX_CLASSIC_BOMBS = 668;

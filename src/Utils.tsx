@@ -1,5 +1,13 @@
-import { CellStates } from '@/Constants';
-import type { BoardType, CellType } from '@/Types';
+import { CellStates, DEFAULT_STATE } from '@/Constants';
+import {
+  MAX_CLASSIC_BOMBS,
+  MAX_CUSTOM_COLUMNS,
+  MAX_CUSTOM_ROWS,
+  MIN_CUSTOM_BOMBS,
+  MIN_CUSTOM_COLUMNS,
+  MIN_CUSTOM_ROWS,
+} from '@/Constants';
+import type { BoardType, CellType, GameState, GameConfig } from '@/Types';
 
 type CellIterator = (cell: CellType, row: number, column: number) => boolean | undefined | void;
 
@@ -196,4 +204,37 @@ export function countFlags(board: BoardType): number {
 
 export function getCellFromCords(row: number, col: number, board: BoardType): CellType | undefined {
   return board[row][col];
+}
+
+export function clamp(value: number, min: number, max: number): number {
+  value = Number.isNaN(value) ? 0 : value;
+  return Math.min(Math.max(value, min), max);
+}
+
+export function getMaximumCustomBombs(rows: number, columns: number): number {
+  rows = Number.isNaN(rows) ? 0 : rows;
+  columns = Number.isNaN(columns) ? 0 : columns;
+  return Math.max(Math.min(rows * columns - 1, MAX_CLASSIC_BOMBS), 0);
+}
+
+export function normalizeCustomGameConfig({ rows, columns, bombs }: GameConfig): GameConfig {
+  rows = clamp(rows, MIN_CUSTOM_ROWS, MAX_CUSTOM_ROWS);
+  columns = clamp(columns, MIN_CUSTOM_COLUMNS, MAX_CUSTOM_COLUMNS);
+  return {
+    rows,
+    columns,
+    bombs: clamp(bombs, MIN_CUSTOM_BOMBS, getMaximumCustomBombs(rows, columns)),
+  };
+}
+
+export function createResetGameState(config: GameConfig): GameState {
+  return { ...DEFAULT_STATE, ...config };
+}
+
+export function cleanNaN(value: number): string {
+  return Number.isNaN(value) ? '' : `${value}`;
+}
+
+export function isValueOutsideRange(value: number, min: number, max: number): boolean {
+  return Number.isNaN(value) || value < min || value > max;
 }

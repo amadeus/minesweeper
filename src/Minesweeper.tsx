@@ -3,17 +3,15 @@ import React, { memo } from 'react';
 
 import Board from '@/Board';
 import Cell from '@/Cell';
-import CustomGameDialog from '@/CustomGameDialog';
 import { ActionTypes, DEFAULT_STATE } from '@/Constants';
+import CustomGameDialog from '@/CustomGameDialog';
 import FaceButton, { FaceTypes } from '@/FaceButton';
-import { createResetGameState, normalizeCustomGameConfig } from '@/GameSettings';
-import type { GameConfig } from '@/GameSettings';
 import { useMinesweeperState } from '@/Hooks';
 import LCDDisplay from '@/LCDDisplay';
 import Menus from '@/Menus';
 import Timer from '@/Timer';
-import type { Dispatch, GameState } from '@/Types';
-import { iterateOverBoard } from '@/Utils';
+import type { Dispatch, GameState, GameConfig } from '@/Types';
+import { createResetGameState, iterateOverBoard, normalizeCustomGameConfig } from '@/Utils';
 import Window from '@/Window';
 
 import styles from '@/Minesweeper.module.css';
@@ -82,7 +80,7 @@ export default function Minesweeper() {
     (config: GameConfig) => {
       dispatch({ type: ActionTypes.RESET_GAME, state: createResetGameState(config) });
     },
-    [dispatch],
+    [dispatch]
   );
 
   const handleOpenCustomDialog = React.useCallback(() => {
@@ -101,7 +99,7 @@ export default function Minesweeper() {
       setIsCustomDialogOpen(false);
       dispatch({ type: ActionTypes.RESET_GAME, state: createResetGameState(normalizedConfig) });
     },
-    [dispatch],
+    [dispatch]
   );
 
   return (
@@ -115,12 +113,13 @@ export default function Minesweeper() {
         />
       )}
       overlay={
-        <CustomGameDialog
-          isOpen={isCustomDialogOpen}
-          initialConfig={customGameConfig}
-          onClose={handleCloseCustomDialog}
-          onSubmit={handleSubmitCustomDialog}
-        />
+        isCustomDialogOpen ? (
+          <CustomGameDialog
+            initialConfig={customGameConfig}
+            onClose={handleCloseCustomDialog}
+            onSubmit={handleSubmitCustomDialog}
+          />
+        ) : null
       }>
       <div className={sharedStyles.outset}>
         <GameStatus state={state} dispatch={dispatch} />

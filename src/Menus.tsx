@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { GameItems, HelpItems, MenuGroups, MenuItems } from '@/Constants';
-import type { GameConfig } from '@/GameSettings';
+import type { GameConfig } from '@/Types';
 import type { MouseEventType } from '@/Types';
 import { MenuItem, MenuListItem } from '@/Window';
 
