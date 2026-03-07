@@ -3,7 +3,7 @@ import React, { memo } from 'react';
 
 import Board from '@/Board';
 import Cell from '@/Cell';
-import { ActionTypes } from '@/Constants';
+import { ActionTypes, DEFAULT_STATE } from '@/Constants';
 import FaceButton, { FaceTypes } from '@/FaceButton';
 import { useMinesweeperState } from '@/Hooks';
 import LCDDisplay from '@/LCDDisplay';
@@ -17,6 +17,12 @@ import styles from '@/Minesweeper.module.css';
 import sharedStyles from '@/Shared.module.css';
 
 const MemoizedCell = memo(Cell);
+
+interface PresetConfig {
+  rows: number;
+  columns: number;
+  bombs: number;
+}
 
 interface GameStatusProps {
   state: GameState;
@@ -64,8 +70,33 @@ function GameBoard({ state, dispatch }: GameBoardProps) {
 
 export default function Minesweeper() {
   const { state, dispatch } = useMinesweeperState();
+  const [, setIsCustomDialogOpen] = React.useState(false);
+
+  const handleNewGame = React.useCallback(() => {
+    dispatch({ type: ActionTypes.RESET_GAME });
+  }, [dispatch]);
+
+  const handleSelectPreset = React.useCallback(
+    ({ rows, columns, bombs }: PresetConfig) => {
+      dispatch({ type: ActionTypes.RESET_GAME, state: { ...DEFAULT_STATE, rows, columns, bombs } });
+    },
+    [dispatch],
+  );
+
+  const handleOpenCustomDialog = React.useCallback(() => {
+    setIsCustomDialogOpen(true);
+  }, []);
+
   return (
-    <Window title="Minesweeper" renderMenuItems={() => <Menus dispatch={dispatch} />}>
+    <Window
+      title="Minesweeper"
+      renderMenuItems={() => (
+        <Menus
+          onNewGame={handleNewGame}
+          onSelectPreset={handleSelectPreset}
+          onOpenCustomDialog={handleOpenCustomDialog}
+        />
+      )}>
       <div className={sharedStyles.outset}>
         <GameStatus state={state} dispatch={dispatch} />
         <GameBoard state={state} dispatch={dispatch} />
