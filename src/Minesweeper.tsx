@@ -51,7 +51,7 @@ function GameBoard({state, dispatch}: GameBoardProps) {
   const {board, rows, columns, gameOver} = state;
   const cells: React.ReactNode[] = [];
   iterateOverBoard(board, (cell) => {
-    cells.push(<MemoizedCell key={`${cell.row}x${cell.col}`} cell={cell} board={board} dispatch={dispatch} />);
+    cells.push(<MemoizedCell key={`${cell.row}x${cell.col}`} cell={cell} dispatch={dispatch} />);
   });
   return (
     <Board rows={rows} columns={columns} disable={gameOver}>
