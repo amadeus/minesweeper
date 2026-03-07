@@ -1,51 +1,22 @@
 import { useReducer } from 'react';
 
 import { ActionTypes, CellStates, DEFAULT_STATE } from '@/Constants';
-import type { Actions, CellType, Dispatch, GameState } from '@/Types';
+import type { Actions, Dispatch, GameState } from '@/Types';
 import {
   getEmptyGrid,
-  precomputeSurroundingBombs,
   countFlags,
   setLosingBoard,
   revealClickedCell,
   checkHasWon,
   setWinningBoard,
   getCellFromCords,
-  iterateOverBoard,
-  getRandomInt,
 } from '@/Utils';
 
 let gameCounter = -1;
 
 function gameInitialize(state: GameState = DEFAULT_STATE): GameState {
   const { rows, columns, bombs: bombsToFlag } = state;
-  let { bombs } = state;
-  let board = getEmptyGrid(rows, columns);
-  const sampleCells: CellType[] = [];
-  iterateOverBoard(board, (cell, row, col) => {
-    // NOTE: Since the beginning of the game is always a crapshoot and
-    // corners tend to be a good spot to start from, lets ensure there is
-    // never a bomb in a corner
-    if (
-      !(
-        (col === 0 && row === 0) ||
-        (col === 0 && row === rows - 1) ||
-        (col === columns - 1 && row === rows - 1) ||
-        (col === columns - 1 && row === 0)
-      )
-    ) {
-      sampleCells.push(cell);
-    }
-  });
-  while (bombs > 0 && sampleCells.length > 0) {
-    const cell = sampleCells.splice(getRandomInt(sampleCells.length), 1)[0];
-    if (cell == null) {
-      throw new Error('gameInitialize: Cell does not exist');
-    }
-    cell.bomb = true;
-    bombs--;
-  }
-  board = precomputeSurroundingBombs(board);
+  const board = getEmptyGrid(rows, columns);
   return { ...state, board, bombsToFlag, id: `${++gameCounter}`, started: false, hasWon: false, gameOver: false };
 }
 
